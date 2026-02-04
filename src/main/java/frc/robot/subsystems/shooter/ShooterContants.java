@@ -25,9 +25,7 @@ public final class ShooterContants {
             double SHOOTERMOTOR2_VOLTS,
             double SHOOTERMOTOR3_VOLTS,
             double FEEDERMOTOR1_VOLTS,
-            double FEEDERMOTOR2_VOLTS) {}
-    ;
-
+            double FEEDERMOTOR2_VOLTS) {};
     public static final VoltageSettings VOLTAGE_SETTINGS = new VoltageSettings(10, 10.0, 10.0, 4.0, 6.0);
 
     public static final Current SHOOTER_MOTORS_CURRENT_LIMIT = Amps.of(20);
