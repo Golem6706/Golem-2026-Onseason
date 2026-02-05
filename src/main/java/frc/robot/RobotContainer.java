@@ -151,16 +151,16 @@ public class RobotContainer {
                 .lockToZeroAngle()
                 .whileTrue(DriveCommands.joystickDriveAtAngle(
                         drive,
-                        () -> controller.rotationalAxisY().getAsDouble(),
-                        () -> -controller.rotationalAxisX().getAsDouble(),
+                        () -> controller.translationalAxisY().getAsDouble(),
+                        () -> controller.translationalAxisX().getAsDouble(),
                         () -> new Rotation2d(Degrees.of(60))));
 
         controller
                 .lockToZeroAngle()
                 .whileTrue(DriveCommands.joystickDriveAtAngle(
                         drive,
-                        () -> controller.rotationalAxisY().getAsDouble(),
-                        () -> -controller.rotationalAxisX().getAsDouble(),
+                        () -> controller.translationalAxisY().getAsDouble(),
+                        () -> controller.translationalAxisX().getAsDouble(),
                         () -> new Rotation2d(vision.getTargetX(1).getDegrees())));
 
         // Switch to X pattern when X button is pressed
@@ -177,8 +177,13 @@ public class RobotContainer {
         controller.scoreButton().whileTrue(shooter.runShooter(12.0 * 0.7)); // Shoote first
         controller.intakeButton().whileTrue(shooter.runFeeder(12.0 * 0.5)); // And then feede the ball to shooter
 
-        // Auto-aiming binding (placeholder for now)
-        controller.autoAiming().whileTrue(Commands.none()); // TODO: Implement auto-aiming command
+        // Auto-aiming binding
+        controller
+                .autoAiming()
+                .whileTrue(DriveCommands.autoAim(
+                        drive,
+                        () -> controller.translationalAxisY().getAsDouble(),
+                        () -> controller.translationalAxisX().getAsDouble()));
 
         // Example Coral Placement Code
         // TODO: delete these code for your own project
