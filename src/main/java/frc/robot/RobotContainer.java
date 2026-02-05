@@ -177,6 +177,9 @@ public class RobotContainer {
         controller.scoreButton().whileTrue(shooter.runShooter(12.0 * 0.7)); // Shoote first
         controller.intakeButton().whileTrue(shooter.runFeeder(12.0 * 0.5)); // And then feede the ball to shooter
 
+        // Auto-aiming binding (placeholder for now)
+        controller.autoAiming().whileTrue(Commands.none()); // TODO: Implement auto-aiming command
+
         // Example Coral Placement Code
         // TODO: delete these code for your own project
         /**

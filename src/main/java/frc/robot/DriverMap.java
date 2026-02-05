@@ -24,17 +24,9 @@ public interface DriverMap extends Subsystem {
 
     Trigger lockChassisWithXFormatButton();
 
-    Trigger autoAlignmentButtonLeft();
-
-    Trigger autoAlignmentButtonRight();
-
-    Trigger moveToL2Button();
+    Trigger autoAiming();
 
     Trigger lockToZeroAngle();
-
-    Trigger moveToL3Button();
-
-    Trigger moveToL4Button();
 
     Trigger intakeButton();
 
@@ -111,12 +103,7 @@ public interface DriverMap extends Subsystem {
         }
 
         @Override
-        public Trigger autoAlignmentButtonLeft() {
-            return xboxController.leftBumper();
-        }
-
-        @Override
-        public Trigger autoAlignmentButtonRight() {
+        public Trigger autoAiming() {
             return xboxController.rightBumper();
         }
 
@@ -126,23 +113,8 @@ public interface DriverMap extends Subsystem {
         }
 
         @Override
-        public Trigger moveToL2Button() {
-            return xboxController.a();
-        }
-
-        @Override
         public Trigger lockToZeroAngle() {
             return xboxController.a();
-        }
-
-        @Override
-        public Trigger moveToL3Button() {
-            return xboxController.b();
-        }
-
-        @Override
-        public Trigger moveToL4Button() {
-            return xboxController.y();
         }
 
         @Override
@@ -246,12 +218,7 @@ public interface DriverMap extends Subsystem {
         }
 
         @Override
-        public Trigger autoAlignmentButtonLeft() {
-            return ps5Controller.L1();
-        }
-
-        @Override
-        public Trigger autoAlignmentButtonRight() {
+        public Trigger autoAiming() {
             return ps5Controller.R1();
         }
 
@@ -261,23 +228,8 @@ public interface DriverMap extends Subsystem {
         }
 
         @Override
-        public Trigger moveToL2Button() {
-            return ps5Controller.cross();
-        }
-
-        @Override
         public Trigger lockToZeroAngle() {
             return ps5Controller.cross();
-        }
-
-        @Override
-        public Trigger moveToL3Button() {
-            return ps5Controller.circle();
-        }
-
-        @Override
-        public Trigger moveToL4Button() {
-            return ps5Controller.triangle();
         }
 
         @Override
