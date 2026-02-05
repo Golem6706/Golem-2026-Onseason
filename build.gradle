@@ -1,6 +1,6 @@
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2025.3.2"
+    id "edu.wpi.first.GradleRIO" version "2026.2.1"
     id "com.peterabeles.gversion" version "1.10"
     id("com.diffplug.spotless") version "7.0.0.BETA4"
 }
@@ -182,7 +182,50 @@ task(eventDeploy) {
 }
 createVersionFile.dependsOn(eventDeploy)
 
-// Spotless formatting
+
+// Original Spotless formatting (Team 6328)
+// project.compileJava.dependsOn(spotlessApply)
+// spotless {
+//     java {
+//         target fileTree(".") {
+//             include "**/*.java"
+//             exclude "**/build/**", "**/build-*/**"
+//         }
+//         toggleOffOn()
+//         googleJavaFormat()
+//         removeUnusedImports()
+//         trimTrailingWhitespace()
+//         endWithNewline()
+//     }
+//     groovyGradle {
+//         target fileTree(".") {
+//             include "**/*.gradle"
+//             exclude "**/build/**", "**/build-*/**"
+//         }
+//         greclipse()
+//         indentWithSpaces(4)
+//         trimTrailingWhitespace()
+//         endWithNewline()
+//     }
+//     json {
+//         target fileTree(".") {
+//             include "**/*.json"
+//             exclude "**/build/**", "**/build-*/**", ".wpilib/**"
+//         }
+//         gson().indentWithSpaces(2)
+//     }
+//     format "misc", {
+//         target fileTree(".") {
+//             include "**/*.md", "**/.gitignore"
+//             exclude "**/build/**", "**/build-*/**"
+//         }
+//         trimTrailingWhitespace()
+//         indentWithSpaces(2)
+//         endWithNewline()
+//     }
+// }
+
+// Spotless formatting (Iron Maple Code Standard / palantirJavaFormat)
 project.compileJava.dependsOn(spotlessApply)
 spotless {
     java {

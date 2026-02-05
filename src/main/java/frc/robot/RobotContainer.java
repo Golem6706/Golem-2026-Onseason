@@ -15,25 +15,23 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.subsystems.vision.VisionConstants.*;
-import static frc.robot.subsystems.vision.VisionConstants.robotToCamera1;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.*;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterIOReal;
 import frc.robot.subsystems.vision.*;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
-import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoralOnFly;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -48,8 +46,11 @@ public class RobotContainer {
     private final Drive drive;
     private SwerveDriveSimulation driveSimulation = null;
 
+    public Shooter shooter;
+
     // Controller
-    private final CommandXboxController controller = new CommandXboxController(0);
+    //     private final CommandXboxController controller = new CommandXboxController(0);
+    private final DriverMap controller = new DriverMap.RightHandedXbox(0);
 
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> autoChooser;
@@ -105,6 +106,8 @@ public class RobotContainer {
                 break;
         }
 
+        shooter = new Shooter(new ShooterIOReal());
+
         // Set up auto routines
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -129,48 +132,65 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
         // Default command, normal field-relative drive
+        // drive.setDefaultCommand(DriveCommands.joystickDrive(
+        //         drive, () -> -controller.getLeftY(), () -> -controller.getLeftX(), () -> -controller.getRightX()));
         drive.setDefaultCommand(DriveCommands.joystickDrive(
-                drive, () -> -controller.getLeftY(), () -> -controller.getLeftX(), () -> -controller.getRightX()));
+                drive,
+                () -> controller.translationalAxisY().getAsDouble(),
+                () -> controller.translationalAxisX().getAsDouble(),
+                () -> -controller.rotationalAxisX().getAsDouble()));
 
         // Lock to 0° when A button is held
+        // controller
+        //         .a()
+        //         .whileTrue(DriveCommands.joystickDriveAtAngle(
+        //                 drive, () -> -controller.getLeftY(), () -> -controller.getLeftX(), () -> new Rotation2d()));
+
         controller
-                .a()
+                .lockToZeroAngle()
                 .whileTrue(DriveCommands.joystickDriveAtAngle(
-                        drive, () -> -controller.getLeftY(), () -> -controller.getLeftX(), () -> new Rotation2d()));
+                        drive,
+                        () -> controller.rotationalAxisY().getAsDouble(),
+                        () -> -controller.rotationalAxisX().getAsDouble(),
+                        () -> new Rotation2d(Degrees.of(60))));
+
+        controller
+                .lockToZeroAngle()
+                .whileTrue(DriveCommands.joystickDriveAtAngle(
+                        drive,
+                        () -> controller.rotationalAxisY().getAsDouble(),
+                        () -> -controller.rotationalAxisX().getAsDouble(),
+                        () -> new Rotation2d(vision.getTargetX(1).getDegrees())));
 
         // Switch to X pattern when X button is pressed
-        controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+        // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+        controller.lockChassisWithXFormatButton().whileTrue(Commands.runOnce(drive::stopWithX, drive));
 
         // Reset gyro / odometry
         final Runnable resetOdometry = Constants.currentMode == Constants.Mode.SIM
                 ? () -> drive.resetOdometry(driveSimulation.getSimulatedDriveTrainPose())
                 : () -> drive.resetOdometry(new Pose2d(drive.getPose().getTranslation(), new Rotation2d()));
-        controller.start().onTrue(Commands.runOnce(resetOdometry).ignoringDisable(true));
+        // controller.start().onTrue(Commands.runOnce(resetOdometry).ignoringDisable(true));
+        controller.resetOdometryButton().onTrue(Commands.runOnce(resetOdometry).ignoringDisable(true));
+
+        controller.scoreButton().whileTrue(shooter.runShooter(12.0 * 0.7)); // Shoote first
+        controller.intakeButton().whileTrue(shooter.runFeeder(12.0 * 0.5)); // And then feede the ball to shooter
 
         // Example Coral Placement Code
         // TODO: delete these code for your own project
-        if (Constants.currentMode == Constants.Mode.SIM) {
-            // L4 placement
-            controller.y().onTrue(Commands.runOnce(() -> SimulatedArena.getInstance()
-                    .addGamePieceProjectile(new ReefscapeCoralOnFly(
-                            driveSimulation.getSimulatedDriveTrainPose().getTranslation(),
-                            new Translation2d(0.4, 0),
-                            driveSimulation.getDriveTrainSimulatedChassisSpeedsFieldRelative(),
-                            driveSimulation.getSimulatedDriveTrainPose().getRotation(),
-                            Meters.of(2),
-                            MetersPerSecond.of(1.5),
-                            Degrees.of(-80)))));
-            // L3 placement
-            controller.b().onTrue(Commands.runOnce(() -> SimulatedArena.getInstance()
-                    .addGamePieceProjectile(new ReefscapeCoralOnFly(
-                            driveSimulation.getSimulatedDriveTrainPose().getTranslation(),
-                            new Translation2d(0.4, 0),
-                            driveSimulation.getDriveTrainSimulatedChassisSpeedsFieldRelative(),
-                            driveSimulation.getSimulatedDriveTrainPose().getRotation(),
-                            Meters.of(1.35),
-                            MetersPerSecond.of(1.5),
-                            Degrees.of(-60)))));
-        }
+        /**
+         * if (Constants.currentMode == Constants.Mode.SIM) { // L4 placement controller.y().onTrue(Commands.runOnce(()
+         * -> SimulatedArena.getInstance() .addGamePieceProjectile(new ReefscapeCoralOnFly(
+         * driveSimulation.getSimulatedDriveTrainPose().getTranslation(), new Translation2d(0.4, 0),
+         * driveSimulation.getDriveTrainSimulatedChassisSpeedsFieldRelative(),
+         * driveSimulation.getSimulatedDriveTrainPose().getRotation(), Meters.of(2), MetersPerSecond.of(1.5),
+         * Degrees.of(-80))))); // L3 placement controller.b().onTrue(Commands.runOnce(() ->
+         * SimulatedArena.getInstance() .addGamePieceProjectile(new ReefscapeCoralOnFly(
+         * driveSimulation.getSimulatedDriveTrainPose().getTranslation(), new Translation2d(0.4, 0),
+         * driveSimulation.getDriveTrainSimulatedChassisSpeedsFieldRelative(),
+         * driveSimulation.getSimulatedDriveTrainPose().getRotation(), Meters.of(1.35), MetersPerSecond.of(1.5),
+         * Degrees.of(-60))))); }
+         */
     }
 
     /**
@@ -194,9 +214,6 @@ public class RobotContainer {
 
         SimulatedArena.getInstance().simulationPeriodic();
         Logger.recordOutput("FieldSimulation/RobotPosition", driveSimulation.getSimulatedDriveTrainPose());
-        Logger.recordOutput(
-                "FieldSimulation/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
-        Logger.recordOutput(
-                "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
+        Logger.recordOutput("FieldSimulation/Fuel", SimulatedArena.getInstance().getGamePiecesArrayByType("Fuel"));
     }
 }
