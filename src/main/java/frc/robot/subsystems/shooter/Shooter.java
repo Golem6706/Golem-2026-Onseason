@@ -12,40 +12,35 @@ public class Shooter extends SubsystemBase {
     private final ShooterIO io;
     private final ShooterIOInputsAutoLogged inputs;
 
-    // Alerts
-    private final Alert shooterMotor1HardwareFaultAlert;
-    private final Alert shooterMotor2HardwareFaultAlert;
-    private final Alert shooterMotor3HardwareFaultAlert;
+    // Dynamic alerts based on motor count
+    private Alert[] shooterMotorAlerts;
+    private Alert[] feederMotorAlerts;
 
-    private final Alert feederMotor1HardwareFaultAlert;
-    private final Alert feederMotor2HardwareFaultAlert;
-
-    // private final Supplier<Pose2d> robotPoseSupplier;
-    // private final Supplier<Rotation2d> shooterAngleSupplier;
-
-    // public Shooter(ShooterIO io, Supplier<Pose2d> robotPoseSupplier, Supplier<Rotation2d> shooterAngleSupplier) {
     public Shooter(ShooterIO io) {
         this.io = io;
         inputs = new ShooterIOInputsAutoLogged();
-        // this.robotPoseSupplier =  robotPoseSupplier;
-        // this.shooterAngleSupplier = shooterAngleSupplier;
 
-        this.shooterMotor1HardwareFaultAlert =
-                AlertsManager.create("ShooterMotor1 hardware detected!", AlertType.kError);
-        this.shooterMotor2HardwareFaultAlert =
-                AlertsManager.create("ShooterMotor2 hardware detected!", AlertType.kError);
-        this.shooterMotor3HardwareFaultAlert =
-                AlertsManager.create("ShooterMotor3 hardware detected!", AlertType.kError);
-        this.feederMotor1HardwareFaultAlert = AlertsManager.create("FeederMotor1 hardware detected!", AlertType.kError);
-        this.feederMotor2HardwareFaultAlert = AlertsManager.create("FeederMotor2 hardware detected!", AlertType.kError);
+        // Initialize alerts arrays (will be populated in periodic based on actual motor count)
+        shooterMotorAlerts = new Alert[0];
+        feederMotorAlerts = new Alert[0];
     }
 
     public boolean hardwareOK() {
-        return inputs.shooterMotor1Connected
-                && inputs.shooterMotor2Connected
-                && inputs.shooterMotor3Connected
-                && inputs.feederMotor1Connected
-                && inputs.feederMotor2Connected;
+        // Check all shooter motors
+        if (inputs.shootersConnected != null) {
+            for (boolean connected : inputs.shootersConnected) {
+                if (!connected) return false;
+            }
+        }
+
+        // Check all feeder motors
+        if (inputs.feedersConnected != null) {
+            for (boolean connected : inputs.feedersConnected) {
+                if (!connected) return false;
+            }
+        }
+
+        return true;
     }
 
     @Override
@@ -53,28 +48,88 @@ public class Shooter extends SubsystemBase {
         // Update inputs from IO and AdvantageKit
         io.updateInputs(inputs);
         Logger.processInputs("Shooter", inputs);
+
+        // Initialize or update alerts based on current motor count
+        updateAlerts();
+
         // Update alerts
-        shooterMotor1HardwareFaultAlert.set(!inputs.shooterMotor1Connected);
-        shooterMotor2HardwareFaultAlert.set(!inputs.shooterMotor2Connected);
-        shooterMotor3HardwareFaultAlert.set(!inputs.shooterMotor3Connected);
+        if (shooterMotorAlerts.length > 0 && inputs.shootersConnected != null) {
+            for (int i = 0; i < Math.min(shooterMotorAlerts.length, inputs.shootersConnected.length); i++) {
+                if (shooterMotorAlerts[i] != null) {
+                    shooterMotorAlerts[i].set(!inputs.shootersConnected[i]);
+                }
+            }
+        }
 
-        feederMotor1HardwareFaultAlert.set(!inputs.feederMotor1Connected);
-        feederMotor2HardwareFaultAlert.set(!inputs.feederMotor2Connected);
+        if (feederMotorAlerts.length > 0 && inputs.feedersConnected != null) {
+            for (int i = 0; i < Math.min(feederMotorAlerts.length, inputs.feedersConnected.length); i++) {
+                if (feederMotorAlerts[i] != null) {
+                    feederMotorAlerts[i].set(!inputs.feedersConnected[i]);
+                }
+            }
+        }
 
-        Logger.recordOutput("ShooterMotor1/connected", inputs.shooterMotor1Connected);
-        Logger.recordOutput("ShooterMotor2/connected", inputs.shooterMotor2Connected);
-        Logger.recordOutput("ShooterMotor3/connected", inputs.shooterMotor3Connected);
+        // Log motor connections
+        if (inputs.shootersConnected != null) {
+            for (int i = 0; i < inputs.shootersConnected.length; i++) {
+                Logger.recordOutput("ShooterMotor" + (i + 1) + "/connected", inputs.shootersConnected[i]);
+            }
+        }
 
-        Logger.recordOutput("FeederMotor1/connected", inputs.feederMotor1Connected);
-        Logger.recordOutput("FeederMotor2/connected", inputs.feederMotor2Connected);
+        if (inputs.feedersConnected != null) {
+            for (int i = 0; i < inputs.feedersConnected.length; i++) {
+                Logger.recordOutput("FeederMotor" + (i + 1) + "/connected", inputs.feedersConnected[i]);
+            }
+        }
+
+        // Log aggregated data
+        Logger.recordOutput("Shooter/AverageVolts", inputs.shooterMotorsAverageVolts);
+        Logger.recordOutput("Shooter/TotalCurrentAmps", inputs.shooterMotorsTotalCurrentAmps);
+        Logger.recordOutput("Feeder/AverageVolts", inputs.feederMotorsAverageVolts);
+        Logger.recordOutput("Feeder/TotalCurrentAmps", inputs.feederMotorsTotalCurrentAmps);
+
+        // Log velocity data if available
+        if (inputs.shooterMotorsVelocityRPM != null && inputs.shooterMotorsVelocityRPM.length > 0) {
+            Logger.recordOutput(
+                    "Shooter/AverageVelocityRPM", calculateAverageVelocity(inputs.shooterMotorsVelocityRPM));
+        }
+
+        if (inputs.feederMotorsVelocityRPM != null && inputs.feederMotorsVelocityRPM.length > 0) {
+            Logger.recordOutput("Feeder/AverageVelocityRPM", calculateAverageVelocity(inputs.feederMotorsVelocityRPM));
+        }
     }
 
-    // private void setVoltage(double shooterMotorsVolts, double feederMotorsVolts) {
-    //     if(!hardwareOK())
-    //         shooterMotorsVolts = feederMotorsVolts = 0.0;
-    //     io.setShooterMotorsVoltage(shooterMotorsVolts);
-    //     io.setFeederMotorsVoltage(feederMotorsVolts);
-    // }
+    private void updateAlerts() {
+        // Create alerts for shooter motors if needed
+        if (inputs.shootersConnected != null && shooterMotorAlerts.length != inputs.shootersConnected.length) {
+            shooterMotorAlerts = new Alert[inputs.shootersConnected.length];
+            for (int i = 0; i < shooterMotorAlerts.length; i++) {
+                shooterMotorAlerts[i] =
+                        AlertsManager.create("ShooterMotor" + (i + 1) + " hardware detected!", AlertType.kError);
+            }
+        }
+
+        // Create alerts for feeder motors if needed
+        if (inputs.feedersConnected != null && feederMotorAlerts.length != inputs.feedersConnected.length) {
+            feederMotorAlerts = new Alert[inputs.feedersConnected.length];
+            for (int i = 0; i < feederMotorAlerts.length; i++) {
+                feederMotorAlerts[i] =
+                        AlertsManager.create("FeederMotor" + (i + 1) + " hardware detected!", AlertType.kError);
+            }
+        }
+    }
+
+    private double calculateAverageVelocity(double[] velocities) {
+        if (velocities == null || velocities.length == 0) return 0.0;
+
+        double sum = 0.0;
+        int count = 0;
+        for (double velocity : velocities) {
+            sum += velocity;
+            count++;
+        }
+        return count > 0 ? sum / count : 0.0;
+    }
 
     private void setShooterMotorVolts(double shooterMotorVolts) {
         if (!hardwareOK()) shooterMotorVolts = 0;
@@ -86,9 +141,15 @@ public class Shooter extends SubsystemBase {
         io.setFeederMotorsVoltage(feederMotorVolts);
     }
 
-    // public Command runVolts(double shooterMotorsVolts, double feederMotorVolts) {
-    //     return run(() -> setVoltage(shooterMotorsVolts, feederMotorVolts));
-    // }
+    private void setShooterVelocity(double rpm) {
+        if (!hardwareOK()) rpm = 0;
+        io.setShooterVelocity(rpm);
+    }
+
+    private void setFeederVelocity(double rpm) {
+        if (!hardwareOK()) rpm = 0;
+        io.setFeederVelocity(rpm);
+    }
 
     public Command runShooter(double shooterMotorVolts) {
         return run(() -> setShooterMotorVolts(shooterMotorVolts));
@@ -98,14 +159,19 @@ public class Shooter extends SubsystemBase {
         return run(() -> setFeederMotorVolts(feederMotorVolts));
     }
 
+    public Command runShooterVelocity(double rpm) {
+        return run(() -> setShooterVelocity(rpm));
+    }
+
+    public Command runFeederVelocity(double rpm) {
+        return run(() -> setFeederVelocity(rpm));
+    }
+
+    public Command runSetPoint(double shooterRPM, double feederRPM) {
+        return runShooterVelocity(shooterRPM).alongWith(runFeederVelocity(feederRPM));
+    }
+
     public Command runIdle() {
         return runShooter(0).alongWith(runFeeder(0));
     }
-
-    // public Command shooterSequence() {
-    //     return Commands.sequence(
-    //             runVolts(8, 0).withTimeout(2.0),
-    //             runVolts(8, 4));
-    // }
-
 }

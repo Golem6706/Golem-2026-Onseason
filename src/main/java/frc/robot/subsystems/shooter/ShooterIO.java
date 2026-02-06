@@ -5,31 +5,28 @@ import org.littletonrobotics.junction.AutoLog;
 public interface ShooterIO {
     @AutoLog
     class ShooterIOInputs {
-        // Shooter Motors
-        public boolean shooterMotor1Connected = false;
-        public double shooterMotor1CurrentAmps = 0.0;
-        public double shooterMotor1OutputVolts = 0.0;
+        // Shooter motors array-based inputs
+        public boolean[] shootersConnected = new boolean[0];
+        public double shooterMotorsAverageVolts = 0.0;
+        public double shooterMotorsTotalCurrentAmps = 0.0;
+        public double[] shooterMotorsVelocityRPM = new double[0]; // New field for velocity measurements
 
-        public boolean shooterMotor2Connected = false;
-        public double shooterMotor2CurrentAmps = 0.0;
-        public double shooterMotor2OutputVolts = 0.0;
-
-        public boolean shooterMotor3Connected = false;
-        public double shooterMotor3CurrentAmps = 0.0;
-        public double shooterMotor3OutputVolts = 0.0;
-
-        public boolean feederMotor1Connected = false;
-        public double feederMotor1CurrentAmps = 0.0;
-        public double feederMotor1OutputVolts = 0.0;
-
-        public boolean feederMotor2Connected = false;
-        public double feederMotor2CurrentAmps = 0.0;
-        public double feederMotor2OutputVolts = 0.0;
+        // Feeder motors array-based inputs
+        public boolean[] feedersConnected = new boolean[0];
+        public double feederMotorsAverageVolts = 0.0;
+        public double feederMotorsTotalCurrentAmps = 0.0;
+        public double[] feederMotorsVelocityRPM = new double[0]; // New field for velocity measurements
     }
 
     void updateInputs(ShooterIOInputs inputs);
 
+    // Open-loop voltage control (backward compatibility)
     default void setShooterMotorsVoltage(double volts) {}
 
     default void setFeederMotorsVoltage(double volts) {}
+
+    // Closed-loop velocity control (new feature)
+    default void setShooterVelocity(double rpm) {}
+
+    default void setFeederVelocity(double rpm) {}
 }
