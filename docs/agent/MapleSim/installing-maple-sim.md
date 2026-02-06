@@ -17,4 +17,4 @@ Alternatively, you can download the JSON vendordeps file and place it in the `/v
 
 
 !!! info ""
-    🙏 Big thanks to [@nstrike](https://www.chiefdelphi.com/u/nstrike/summary) for all the help in setting up the vendordeps deployment. 
+    🙏 Big thanks to [@nstrike](https://www.chiefdelphi.com/u/nstrike/summary) for all the help in setting up the vendordeps deployment.

@@ -3,9 +3,9 @@
 ## Swerve-Drive Simulation Dynamics with Interactive Field
 The standout feature of this project is the integration of the [dyn4j physics engine](https://github.com/dyn4j/dyn4j), which enables a highly realistic and interactive simulation environment.
 
-In traditional swerve drive simulations, the drivetrain is typically modeled using several [DCMotorSim](https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/simulation/DCMotorSim.html) instances to simulate motor behavior. 
+In traditional swerve drive simulations, the drivetrain is typically modeled using several [DCMotorSim](https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/simulation/DCMotorSim.html) instances to simulate motor behavior.
 
-In maple-sim, the drivetrain simulation goes a step further by calculating the frictional and propelling forces on each swerve module. 
+In maple-sim, the drivetrain simulation goes a step further by calculating the frictional and propelling forces on each swerve module.
 These forces are used to model the drivetrain as a rigid body, allowing for more accurate interaction with the field environment.
 
 ![swerve drive dynamics.gif](media%2Fswerve%20drive%20dynamics.gif)
@@ -39,7 +39,7 @@ The simulator also supports a fixed intake module, allowing the robot to automat
 **[View Full Document on Intake Simulation](./simulating-intake.md) >>>**
 
 ## Projectile Simulation
-In FRC, game pieces are often launched into the air. 
+In FRC, game pieces are often launched into the air.
 **maple-sim** offers a straightforward physics simulation to model the behavior of these projectiles.
 
 ![projectile simulation.gif](media%2Fprojectile%20simulation.gif)
@@ -48,7 +48,6 @@ In FRC, game pieces are often launched into the air.
 
 ## Opponent Robots Simulation
 
-Simulated opponent robots can be manually controlled with a gamepad for defensive play or set to follow pre-programmed cycle paths. 
+Simulated opponent robots can be manually controlled with a gamepad for defensive play or set to follow pre-programmed cycle paths.
 Just like real robots, these opponents have collision boundaries, enabling drivers to practice both defensive and offensive strategies effectively.
 ![opponentrobotsim.gif](media/opponent%20robot%20simulation.gif)
-

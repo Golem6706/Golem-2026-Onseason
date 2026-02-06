@@ -7,18 +7,18 @@
 
 ??? question "Why a Physics Engine?"
     <p>
-        A simulation engine is a powerful tool that provides realistic approximations of physical systems. With 
-        <strong>maple-sim</strong>, we integrate the open-source Java rigid-body dynamics engine, 
-        <a href="https://github.com/dyn4j/dyn4j">dyn4j</a>, capable of simulating 2D forces and collisions 
-        between rigid shapes. This integration transforms the scope of robot simulations by enabling realistic 
+        A simulation engine is a powerful tool that provides realistic approximations of physical systems. With
+        <strong>maple-sim</strong>, we integrate the open-source Java rigid-body dynamics engine,
+        <a href="https://github.com/dyn4j/dyn4j">dyn4j</a>, capable of simulating 2D forces and collisions
+        between rigid shapes. This integration transforms the scope of robot simulations by enabling realistic
         interactions between robots, field elements, and game pieces.
     </p>
     <img src="./media/physics%20engine.png" alt="physics engine illustration" />
     <p>
-        Before <strong>maple-sim</strong>, most FRC robot simulations focused solely on the robot itself—its 
-        sensors, movements, and internal operations. Now, through the power of physics simulation, 
-        <strong>maple-sim</strong> allows your robot to engage directly with its environment. Imagine testing 
-        robot interactions with obstacles, field elements, and game pieces, all within the simulated world. 
+        Before <strong>maple-sim</strong>, most FRC robot simulations focused solely on the robot itself—its
+        sensors, movements, and internal operations. Now, through the power of physics simulation,
+        <strong>maple-sim</strong> allows your robot to engage directly with its environment. Imagine testing
+        robot interactions with obstacles, field elements, and game pieces, all within the simulated world.
         A simulation that is realistic enough to <strong>feel like a video game.</strong>
     </p>
     <a href="https://www.youtube.com/watch?v=CBx1_Dosgec">
@@ -40,9 +40,9 @@ For an in-depth description of the simulations, please refer to [Simulation Deta
 
 <div class="grid cards" markdown>
 -   **CTRE Generated Swerve Code**
-    
+
     ---
-    The [CTRE Generated Swerve Code](https://v6.docs.ctr-electronics.com/en/latest/docs/tuner/tuner-swerve/index.html), enhanced with maple-sim integration for improved chassis physics simulation. 
+    The [CTRE Generated Swerve Code](https://v6.docs.ctr-electronics.com/en/latest/docs/tuner/tuner-swerve/index.html), enhanced with maple-sim integration for improved chassis physics simulation.
 
     [:octicons-arrow-right-24: Project Page](https://github.com/Shenzhen-Robotics-Alliance/CTRE-Swerve-MapleSim/)
 
@@ -57,27 +57,27 @@ For an in-depth description of the simulations, please refer to [Simulation Deta
 
     ---
     The [AdvantageKit Swerve Template with REV SparkMax/SparkFlex hardware](https://docs.advantagekit.org/getting-started/template-projects/spark-swerve-template), enhanced with maple-sim integration for improved chassis physics simulation.
-    
+
     [:octicons-arrow-right-24: Project Page](https://github.com/Shenzhen-Robotics-Alliance/AdvantageKit-SparkSwerveTemplate-MapleSim/)
 
 -   **AdvantageKit Talon Swerve Template**
 
-      --- 
+      ---
       The [AdvantageKit Swerve Template with CTRE hardware](https://docs.advantagekit.org/getting-started/template-projects/talonfx-swerve-template), enhanced with maple-sim integration for improved chassis physics simulation.
-    
+
       [:octicons-arrow-right-24: Project Page](https://github.com/Shenzhen-Robotics-Alliance/AdvantageKit-TalonSwerveTemplate-MapleSim/)
-    
+
 -   **AdvantageKit Talon Swerve Template - *Enhanced Version***
 
-    ---    
+    ---
     A further enhanced version of the *TalonSwerveTemplate-maple-sim* project, utilizing [Phoenix 6 simulation](https://v6.docs.ctr-electronics.com/en/latest/docs/api-reference/simulation/simulation-intro.html) to simulate CTRE motor controller closed-loops and the CAN bus
-    
+
     [:octicons-arrow-right-24: Project Page](https://github.com/Shenzhen-Robotics-Alliance/AdvantageKit-TalonSwerveTemplate-MapleSim-Enhanced/)
 </div>
 
 ??? example "Other Custom Templates & Examples"
     **[Maple-Swerve-Skeleton](https://github.com/Shenzhen-Robotics-Alliance/Maple-Swerve-Skeleton)**: Our custom swerve drive project based on the Advanced Swerve Drive Project, featuring drivetrain simulation, vision simulation, and convenient control features.
-    
+
 
     **[5516-2024-OffSeason-RobotCode](https://github.com/Shenzhen-Robotics-Alliance/Maple-Swerve-Skeleton/tree/main/example/5516-2024-OffSeason)**: Our 2024 off-season robot code, which implements a range of advanced simulations. This code can be run on a real robot and even played like a video game. Watch the [Videos](https://www.youtube.com/watch?v=5jr1L8xWpog&list=PLFS6A0KifAK1ycwlzIlvvFJkWNsQHVjSN)
 

@@ -61,7 +61,7 @@ public class IntakeIOSim {
     </div>
 === "Over-The-Bumper (OTB) Intakes"
     <div style="display: flex; align-items:center">
-        <div style="align-items: center; width: 29%"> 
+        <div style="align-items: center; width: 29%">
             <img src="../media/intakesim2.png" style="max-height: 100%; margin: auto;">
         </div>
         <div style="width: 70%; font-size:13px;">
@@ -89,7 +89,7 @@ public class IntakeIOSim {
                 // Specify the type of game pieces that the intake can collect
                 "Fuel",
                 // Specify the drivetrain to which this intake is attached
-                driveTrainSimulation, 
+                driveTrainSimulation,
                 // Our intake has a custom shape of a triangle (shape is specified in chassis frame-of-reference)
                 new Triangle(new Vector2(0, 0), new Vector2(0.2, 0), new Vector2(0, 0.2)),
                 // The intake can hold up to 1 note
@@ -137,5 +137,5 @@ public class IntakeIOSim implements IntakeIO {
 !!! tip
       As shown in the code above, you can notify `FlyWheelIOSim` (the simulated flywheel mechansim) to shoot the note out when the note is passed to the shooter from the intake. See [Simulating GamePiece Projectiles](./simulating-projectiles.md) for more details.
 
-   
+
       If you want to simulate how the note moves inside the intake/feeder, you can take the indefinite integral of the intake/feeder voltage over time since the fuel entered the intake.  This gives an approximation of the note's position in the feeder.

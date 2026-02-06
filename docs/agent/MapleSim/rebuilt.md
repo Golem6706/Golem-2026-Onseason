@@ -12,7 +12,7 @@ SimulatedArena.getInstance().addGamePiece(new RebuiltFuelOnField(new Translation
 You can visualize them by calling:
 
 ```java
-Logger.recordOutput("FieldSimulation/Fuel", 
+Logger.recordOutput("FieldSimulation/Fuel",
     SimulatedArena.getInstance().getGamePiecesArrayByType("Fuel"));
 ```
 

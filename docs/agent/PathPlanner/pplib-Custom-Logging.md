@@ -13,7 +13,7 @@ a [Field2d Widget](https://docs.wpilib.org/en/stable/docs/software/dashboards/gl
 ```Java
 public class RobotContainer {
     private final Field2d field;
-    
+
     public RobotContainer(){
         field = new Field2d();
         SmartDashboard.putData("Field", field);
@@ -53,19 +53,19 @@ frc::Field2d m_field;
 
 RobotContainer() {
     frc::SmartDashboard::PutData("Field", &m_field);
-    
+
     // Logging callback for current robot pose
     PathPlannerLogging::setLogCurrentPoseCallback([this](frc::Pose2d pose) -> {
         // Do whatever you want with the pose here
         m_field.SetRobotPose(pose);
     });
-    
+
     // Logging callback for target robot pose
     PathPlannerLogging::setLogTargetPoseCallback([this](frc::Pose2d pose) -> {
         // Do whatever you want with the pose here
         m_field.GetObject("target pose").setPose(pose);
     });
-    
+
     // Logging callback for the active path, this is sent as a vector of poses
     PathPlannerLogging::setLogActivePathCallback([this](std::vector<frc::Pose2d> poses) -> {
         // Do whatever you want with the poses here

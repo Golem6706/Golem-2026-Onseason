@@ -9,7 +9,7 @@
 ---
 ## 0. IO Abstraction
 
-!!! tip 
+!!! tip
       If you're using AdvantageKit, your code is already IO-abstracted. You do not need to restructure your code to use maple-sim.
 
 The core idea is that the code for your subsystem interacts with an IO interface that can have multiple implementations.
@@ -64,12 +64,12 @@ public class GyroIOPigeon2 implements GyroIO {
     public GyroIOPigeon2(...) {
         // Implementation details
     }
-    
+
     @Override // specified by GroIOSim interface
     public Rotation2d getGyroRotation() {
         return pigeon2.getYaw();
     }
-    
+
     @Override // specified by GroIOSim interface
     public AngularVelocity getGyroAngularVelocity() {
         return pigeon2.getAngularVelocity();
@@ -86,12 +86,12 @@ public class GyroIOSim implements GyroIO {
     public GyroIOSim(GyroSimulation gyroSimulation) {
         this.gyroSimulation = gyroSimulation;
     }
-    
+
     @Override // specified by GroIOSim interface
     public Rotation2d getGyroRotation() {
         return this.gyroSimulation.getGyroReading();
     }
-    
+
     @Override // specified by GroIOSim interface
     public AngularVelocity getGyroAngularVelocity() {
         return this.gyroSimulation.getMeasuredAngularVelocity();
@@ -132,7 +132,7 @@ public class ModuleIOSim implements ModuleIO {
                 .useGenericControllerForSteer()
                 .withCurrentLimit(Amps.of(20));
     }
-    
+
     @Override // specified by ModuleIO interface
     public void setDriveOutputVoltage(Voltage voltage) {
         this.driveMotor.requestVoltage(voltage);
@@ -142,17 +142,17 @@ public class ModuleIOSim implements ModuleIO {
     public void setSteerOutputVoltage(Voltage voltage) {
         this.turnMotor.requestVoltage(voltage);
     }
-    
+
     @Override // specified by ModuleIO interface
     public Rotation2d getSteerFacing() {
         return this.moduleSimulation.getSteerAbsoluteFacing();
     }
-    
+
     @Override // specified by ModuleIO interface
     public Angle getSteerRelativePosition() {
         return moduleSimulation.getSteerRelativeEncoderPosition().divide(moduleSimulation.STEER_GEAR_RATIO));
     }
-    
+
     @Override // specified by ModuleIO interface
     public Angle getDriveWheelrPositiond() {
         return moduleSimulation.getDrieWheelFinalPosition()
@@ -177,5 +177,3 @@ this.drive = new Drive(
         new ModuleIOSim(this.swerveDriveSimulation.getModules()[3])
 );
 ```
-
-

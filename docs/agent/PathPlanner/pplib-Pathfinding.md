@@ -102,7 +102,7 @@ frc::Pose2d targetPose = frc::Pose2d(10_m, 5_m, frc::Rotation2d(180_deg));
 
 // Create the constraints to use while pathfinding
 PathConstraints constraints = PathConstraints(
-    3.0_mps, 4.0_mps_sq, 
+    3.0_mps, 4.0_mps_sq,
     540_deg_per_s, 720_deg_per_s_sq);
 
 // Since AutoBuilder is configured, we can use it to build pathfinding commands
@@ -128,7 +128,7 @@ targetPose = Pose2d(10, 5, Rotation2d.fromDegrees(180))
 
 # Create the constraints to use while pathfinding
 constraints = PathConstraints(
-    3.0, 4.0, 
+    3.0, 4.0,
     degreesToRadians(540), degreesToRadians(720)
 )
 
@@ -183,7 +183,7 @@ auto path = PathPlannerPath::fromPathFile("Example Human Player Pickup");
 
 // Create the constraints to use while pathfinding. The constraints defined in the path will only be used for the path.
 PathConstraints constraints = PathConstraints(
-    3.0_mps, 4.0_mps_sq, 
+    3.0_mps, 4.0_mps_sq,
     540_deg_per_s, 720_deg_per_s_sq);
 
 // Since AutoBuilder is configured, we can use it to build pathfinding commands
@@ -206,7 +206,7 @@ path = PathPlannerPath.fromPathFile('Example Human Player Pickup');
 
 # Create the constraints to use while pathfinding. The constraints defined in the path will only be used for the path.
 constraints = PathConstraints(
-    3.0, 4.0, 
+    3.0, 4.0,
     degreesToRadians(540), degreesToRadians(720)
 )
 

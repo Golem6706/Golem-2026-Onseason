@@ -55,7 +55,7 @@ RobotContainer::RobotContainer() : m_swerve(), m_exampleSubsystem() {
 
     // Do all other initialization
     configureButtonBindings();
-    
+
     // ...
 }
 ```
@@ -79,7 +79,7 @@ class RobotContainer:
 
         # Do all other initialization
         self.configureButtonBindings()
-    
+
         # ...
 ```
 

@@ -57,7 +57,7 @@ The `DriveTrainSimulationConfig` object encapsulates the physical properties and
 === "Custom Swerve with Mixed Module Configurations"
     <div>
         ```Java
-        final SwerveModuleSimulationConfig 
+        final SwerveModuleSimulationConfig
                 FRONT_LEFT_MODULE_CONFIG = new SwerveModuleSimulationConfig(...),
                 FRONT_RIGHT_MODULE_CONFIG = new SwerveModuleSimulationConfig(...),
                 BACK_LEFT_MODULE_CONFIG = new SwerveModuleSimulationConfig(...),
@@ -69,9 +69,9 @@ The `DriveTrainSimulationConfig` object encapsulates the physical properties and
                 .withGyro(COTS.ofPigeon2())
                 // Specify swerve module (for realistic swerve dynamics)
                 .withSwerveModules(
-                        FRONT_LEFT_MODULE_CONFIG, 
-                        FRONT_RIGHT_MODULE_CONFIG, 
-                        BACK_LEFT_MODULE_CONFIG, 
+                        FRONT_LEFT_MODULE_CONFIG,
+                        FRONT_RIGHT_MODULE_CONFIG,
+                        BACK_LEFT_MODULE_CONFIG,
                         BACK_RIGHT_MODULE_CONFIG)
                 // Configures the track length and track width (spacing between swerve modules)
                 .withTrackLengthTrackWidth(Inches.of(24), Inches.of(24))
@@ -109,7 +109,7 @@ SimulatedArena.getInstance().addDriveTrainSimulation(swerveDriveSimulation);
 
 <div class="grid cards" markdown>
 -   **The simple approach**
-    
+
     ---
     *This approach emphasizes ease of use while maintaining a reasonably accurate model of robot behavior. Although the physics simulation is realistic enough to accurately mimic your drivetrain, the code used to manipulate the simulated drivetrain is embedded into maple-sim for convenience. As a result, it may differ slightly from the code running on your real robot.*
 

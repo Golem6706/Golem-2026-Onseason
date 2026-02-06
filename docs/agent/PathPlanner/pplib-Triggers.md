@@ -52,7 +52,7 @@ RobotContainer::RobotContainer() : m_swerve(), m_exampleSubsystem() {
 
     // Do all other initialization
     configureButtonBindings();
-    
+
     // ...
 }
 ```
@@ -74,7 +74,7 @@ class RobotContainer:
 
         # Do all other initialization
         self.configureButtonBindings()
-    
+
         # ...
 ```
 
@@ -97,7 +97,7 @@ public class RobotContainer() {
         exampleSubsystem = new ExampleSubsystem();
 
         new PointTowardsZoneTrigger("Speaker").whileTrue(Commands.print("aiming at speaker"));
-        
+
         // Do all other initialization
         configureButtonBindings();
 
@@ -116,10 +116,10 @@ using namespace pathplanner;
 
 RobotContainer::RobotContainer() : m_swerve(), m_exampleSubsystem() {
     PointTowardsZoneTrigger("Speaker").WhileTrue(frc2::cmd::Print("aiming at speaker"));
-    
+
     // Do all other initialization
     configureButtonBindings();
-    
+
     // ...
 }
 ```
@@ -137,10 +137,10 @@ class RobotContainer:
         self.exampleSubsystem = ExampleSubsystem()
 
         PointTowardsZoneTrigger('Speaker').whileTrue(cmd.print('aiming at speaker'))
-        
+
         # Do all other initialization
         self.configureButtonBindings()
-    
+
         # ...
 ```
 
@@ -162,7 +162,7 @@ public class RobotContainer() {
         // Subsystem initialization
         swerve = new Swerve();
         exampleSubsystem = new ExampleSubsystem();
-        
+
         autoCommand = new PathPlannerAuto("Example Auto");
         // PathPlannerAuto can also be created with a custom command
         // autoCommand = new PathPlannerAuto(new CustomAutoCommand());
@@ -176,7 +176,7 @@ public class RobotContainer() {
         autoCommand.activePath("Example Path").onTrue(Commands.print("started following Example Path"));
         autoCommand.nearFieldPosition(new Translation2d(2, 2), 0.5).whileTrue(Commands.print("within 0.5m of (2, 2)"));
         autoCommand.inFieldArea(new Translation2d(2, 2), new Translation2d(4, 4)).whileTrue(Commands.print("in area of (2, 2) - (4, 4)"));
-        
+
         // Do all other initialization
         configureButtonBindings();
 
@@ -207,10 +207,10 @@ RobotContainer::RobotContainer() : m_swerve(), m_exampleSubsystem() {
     m_autoCommand.activePath("Example Path").OnTrue(frc2::cmd::Print("started following Example Path"));
     m_autoCommand.nearFieldPosition(Translation2d(2, 2), 0.5).WhileTrue(frc2::cmd::Print("within 0.5m of (2, 2)"));
     m_autoCommand.inFieldArea(Translation2d(2, 2), Translation2d(4, 4)).WhileTrue(frc2::cmd::Print("in area of (2, 2) - (4, 4)"));
-    
+
     // Do all other initialization
     configureButtonBindings();
-    
+
     // ...
 }
 ```
@@ -239,10 +239,10 @@ class RobotContainer:
         self.autoCommand.activePath("Example Path").onTrue(cmd.print_("started following Example Path"));
         self.autoCommand.nearFieldPosition(Translation2d(2, 2), 0.5).whileTrue(cmd.print_("within 0.5m of (2, 2)"));
         self.autoCommand.inFieldArea(Translation2d(2, 2), Translation2d(4, 4)).whileTrue(cmd.print_("in area of (2, 2) - (4, 4)"));
-        
+
         # Do all other initialization
         self.configureButtonBindings()
-    
+
         # ...
 ```
 

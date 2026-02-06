@@ -43,7 +43,7 @@ public class AIRobotInSimulation extends SubsystemBase {
         this.id = id;
         this.queeningPose = ROBOT_QUEENING_POSITIONS[id];
         this.driveSimulation = new SimplifiedSwerveDriveSimulation(new SwerveDriveSimulation(
-            DRIVETRAIN_CONFIG, 
+            DRIVETRAIN_CONFIG,
             queeningPose
         ));
 
@@ -88,7 +88,7 @@ public class AIRobotInSimulation extends SubsystemBase {
                 // Provide actual robot speed in simulation, bypassing encoder measurement error
                 driveSimulation::getActualSpeedsRobotRelative,
                 // Chassis speeds output
-                (speeds, feedforwards) -> 
+                (speeds, feedforwards) ->
                     driveSimulation.runChassisSpeeds(speeds, new Translation2d(), false, false),
                 driveController, // Specify PID controller
                 PP_CONFIG,       // Specify robot configuration

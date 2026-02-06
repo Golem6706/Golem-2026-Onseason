@@ -18,27 +18,27 @@ When writing code for the project (excluding templates and examples), please adh
 !!! success "**Things you should do**"
 
     ---
-    - **Be a "never nester".** 
+    - **Be a "never nester".**
     :   See [this video](https://www.youtube.com/watch?v=CFRhGnuXG-4) for an explanation.
-    
+
     - **Use `camelCase` for variables and `ALL_CAPS` for constants.**
 
-    - **Ensure variable/constant names are descriptive and self-explanatory.** 
+    - **Ensure variable/constant names are descriptive and self-explanatory.**
     :   e.g., `differenceBetweenGroundAndDesiredVelocityMetersPerSecond`, `ROBOT_MASS_WITH_BUMPERS`.
 
-    - **Use [WPILib units library](https://docs.wpilib.org/pt/latest/docs/software/basic-programming/java-units.html) for configurations and APIs.**  
+    - **Use [WPILib units library](https://docs.wpilib.org/pt/latest/docs/software/basic-programming/java-units.html) for configurations and APIs.**
     :   It’s fine to use `double` for intermediate variables during computation, but make sure to use SI units and put units to the variable name (e.g., `rawMotorTorqueNewtonMeters`, `delaySeconds`).
-    
-    - **Add Javadocs for all public functions and constructors.**  
+
+    - **Add Javadocs for all public functions and constructors.**
     :   Method Javadocs should begin with a `<h2>` title.
 
     - **Provide references for math/physics equations used in your code.**
 
 !!! failure "**Things to avoid**"
-    
+
     ---
     - ***Avoid* using `m_variable` or `k_variable` to distinguish constants from variables.**"
-    
+
     - ***Avoid* excessively long files.**"
     :   i.e. files longer than 600 lines.
 

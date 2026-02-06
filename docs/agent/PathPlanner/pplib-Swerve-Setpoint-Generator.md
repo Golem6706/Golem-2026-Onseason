@@ -26,8 +26,8 @@ public class SwerveSubsystem extends Subsystem {
     public SwerveSubsystem() {
         // All other subsystem initialization
         // ...
-        
-        // Load the RobotConfig from the GUI settings. You should 
+
+        // Load the RobotConfig from the GUI settings. You should
         // probably store this in your Constants file
         RobotConfig config;
         try{
@@ -36,18 +36,18 @@ public class SwerveSubsystem extends Subsystem {
           // Handle exception as needed
           e.printStackTrace();
         }
-        
+
         setpointGenerator = new SwerveSetpointGenerator(
             config, // The robot configuration. This is the same config used for generating trajectories and running path following commands.
             Units.rotationsToRadians(10.0) // The max rotation velocity of a swerve module in radians per second. This should probably be stored in your Constants file
         );
-        
+
         // Initialize the previous setpoint to the robot's current speeds & module states
         ChassisSpeeds currentSpeeds = getCurrentSpeeds(); // Method to get current robot-relative chassis speeds
         SwerveModuleState[] currentStates = getCurrentModuleStates(); // Method to get the current swerve module states
         previousSetpoint = new SwerveSetpoint(currentSpeeds, currentStates, DriveFeedforwards.zeros(config.numModules));
     }
-    
+
     /**
      * This method will take in desired robot-relative chassis speeds,
      * generate a swerve setpoint, then set the target state for each module
@@ -89,14 +89,14 @@ SwerveSubsystem::SwerveSubsystem(){
     RobotConfig config = RobotConfig::fromGUISettings();
 
     setpointGenerator = SwerveSetpointGenerator(
-		config,
-		10_rad_per_s
-	);
+    config,
+    10_rad_per_s
+  );
 
-	// Initialize the previous setpoint to the robot's current speeds & module states
-	frc::ChassisSpeeds currentSpeeds = getCurrentSpeeds(); // Method to get current robot-relative chassis speeds
-	std::vector<frc::SwerveModuleState> currentStates = getCurrentModuleStates(); // Method to get the current swerve module states
-	previousSetpoint = SwerveSetpoint(currentSpeeds, currentStates, DriveFeedforwards::zeros(config.numModules));
+  // Initialize the previous setpoint to the robot's current speeds & module states
+  frc::ChassisSpeeds currentSpeeds = getCurrentSpeeds(); // Method to get current robot-relative chassis speeds
+  std::vector<frc::SwerveModuleState> currentStates = getCurrentModuleStates(); // Method to get the current swerve module states
+  previousSetpoint = SwerveSetpoint(currentSpeeds, currentStates, DriveFeedforwards::zeros(config.numModules));
 }
 
 /**
@@ -106,14 +106,14 @@ SwerveSubsystem::SwerveSubsystem(){
  * @param speeds The desired robot-relative speeds
  */
 void SwerveSubsystem::driveRobotRelative(frc::ChassisSpeeds speeds) {
-	// Note: it is important to not discretize speeds before or after
-	// using the setpoint generator, as it will discretize them for you
-	previousSetpoint = setpointGenerator.generateSetpoint(
-		previousSetpoint, // The previous setpoint
-		speeds, // The desired target speeds
-		0.02_s // The loop time of the robot code, in seconds
-	);
-	setModuleStates(previousSetpoint.moduleStates()); // Method that will drive the robot given target module states
+  // Note: it is important to not discretize speeds before or after
+  // using the setpoint generator, as it will discretize them for you
+  previousSetpoint = setpointGenerator.generateSetpoint(
+    previousSetpoint, // The previous setpoint
+    speeds, // The desired target speeds
+    0.02_s // The loop time of the robot code, in seconds
+  );
+  setModuleStates(previousSetpoint.moduleStates()); // Method that will drive the robot given target module states
 }
 ```
 

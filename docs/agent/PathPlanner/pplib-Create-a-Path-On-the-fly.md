@@ -24,7 +24,7 @@ and a helper method available that makes doing so a lot easier.
 <tab title="Java" group-key="java">
 
 ```Java
-// Create a list of waypoints from poses. Each pose represents one waypoint. 
+// Create a list of waypoints from poses. Each pose represents one waypoint.
 // The rotation component of the pose should be the direction of travel. Do not use holonomic rotation.
 List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
         new Pose2d(1.0, 1.0, Rotation2d.fromDegrees(0)),
@@ -56,7 +56,7 @@ path.preventFlipping = true;
 using namespace pathplanner;
 
 
-// Create a vector of waypoints from poses. Each pose represents one waypoint. 
+// Create a vector of waypoints from poses. Each pose represents one waypoint.
 // The rotation component of the pose should be the direction of travel. Do not use holonomic rotation.
 std::vector<frc::Pose2d> poses{
     frc::Pose2d(1.0_m, 1.0_m, frc::Rotation2d(0_deg)),
@@ -89,7 +89,7 @@ from pathplannerlib.path import PathPlannerPath, PathConstraints, GoalEndState
 from wpimath.geometry import Pose2d, Rotation2d
 import math
 
-# Create a list of waypoints from poses. Each pose represents one waypoint. 
+# Create a list of waypoints from poses. Each pose represents one waypoint.
 # The rotation component of the pose should be the direction of travel. Do not use holonomic rotation.
 waypoints = PathPlannerPath.waypointsFromPoses(
     Pose2d(1.0, 1.0, Rotation2d.fromDegrees(0)),

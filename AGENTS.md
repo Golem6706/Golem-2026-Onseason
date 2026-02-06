@@ -26,6 +26,10 @@
    - **36+ markdown files** covering data visualization and analysis
    - **Purpose**: Read robot logs and real-time telemetry with 2D/3D field visualization, data graphing, and analysis tools (users only, not agents)
 
+6. **Phoenix6** (`docs/agent/Phoenix6/`) - CTRE hardware control library
+   - **69+ RST files** covering motor controllers, sensors, and CAN bus communication
+   - **Purpose**: Control CTRE hardware including TalonFX motors, Pigeon2 IMU, and CANCoder encoders via CAN bus
+
 ### **Command-based robot framework**
 
 The robot uses WPILib's **command-based programming paradigm**, which structures robot code around reusable commands and subsystems. Understanding this framework is essential for modifying robot behavior:
@@ -70,6 +74,61 @@ Command Scheduler Runs (every cycle)
 - **Conditional Commands**: Commands that run based on runtime conditions
 
 **Important**: Always use the IO interface pattern for hardware abstraction to maintain simulation compatibility. Subsystems should only interact with hardware through IO interfaces, not directly with motor controllers or sensors.
+
+### **CTRE Phoenix6 Framework Concepts**
+
+The Phoenix6 library controls CTRE hardware via **CAN bus** (Controller Area Network). Key concepts:
+
+**CAN Bus Communication:**
+- Devices communicate over a shared CAN bus at 1Mbps
+- Each device has a unique CAN ID (0-62 for standard, 0-63 for CANivore)
+- Messages are prioritized by CAN ID (lower ID = higher priority)
+
+**Status Signals:**
+- Asynchronous data streams from hardware (position, velocity, faults)
+- Use `getStatusSignal()` to subscribe to signals
+- Signals update at hardware-defined rates (1ms-100ms)
+- Must call `refresh()` or use `getValue()` with timeout
+
+**Control Output:**
+- Send control requests to hardware (position, velocity, duty cycle)
+- Use `setControl()` with request objects
+- Supports open-loop, closed-loop, motion profiling
+- Requests are queued and executed by hardware
+
+**Key CTRE Hardware Devices:**
+
+1. **TalonFX Motor Controller**:
+   - Brushless Falcon 500/ Kraken motor control
+   - Integrated encoder (2048 CPR via Hall sensors)
+   - Supports FOC (Field Oriented Control)
+   - Built-in PID control with feedforward
+   - Motion Magic for trapezoidal motion profiles
+   - Current limiting and voltage compensation
+
+2. **Pigeon2 IMU Module**:
+   - 9-axis inertial measurement unit
+   - Gyro, accelerometer, magnetometer
+   - Yaw, pitch, roll measurements
+   - Built-in sensor fusion
+   - Mounting calibration
+   - CAN bus or ribbon cable interface
+
+3. **CANCoder Magnetic Encoder**:
+   - Absolute magnetic position sensor
+   - 4096 CPR resolution
+   - Continuous rotation (no stops)
+   - Magnet mounting calibration
+   - Duty cycle or PWM output options
+   - CAN bus communication
+
+**Common Patterns:**
+- Use `TalonFXConfiguration` for motor setup
+- Configure `Slot0` for PID gains
+- Set `NeutralMode` to `Brake` or `Coast`
+- Enable `StatorCurrentLimit` for protection
+- Use `StatusSignal` for asynchronous updates
+- Implement hardware abstraction via IO interfaces
 
 ## Build/Lint/Test Commands
 
@@ -152,7 +211,7 @@ This project uses the **IO Interface pattern** for simulation support:
 // Real implementation
 public class ModuleIOTalonFX implements ModuleIO
 
-// Simulation implementation  
+// Simulation implementation
 public class ModuleIOSim implements ModuleIO
 
 // Usage in subsystem
@@ -194,7 +253,7 @@ src/main/java/frc/robot/
 
 ### **Vendor Dependencies** (`vendordeps/`)
 1. `AdvantageKit.json` - Logging and replay framework
-2. `maple-sim.json` - Physics simulation engine  
+2. `maple-sim.json` - Physics simulation engine
 3. `PathplannerLib.json` - Path planning library
 4. `Phoenix6.json` - CTRE motor controllers (Talon FX)
 5. `photonlib.json` - Vision processing (PhotonVision)
@@ -317,6 +376,77 @@ public static enum Mode {
 - `more-features/custom-assets/` - Custom 3D asset creation and import
 - `more-features/coordinate-systems.md` - Coordinate system configuration
 - `more-features/urcl.md` - Universal Robot Control Language support
+
+### **Phoenix6 Documentation** (`docs/agent/Phoenix6/`) - **69+ files**
+- **API Reference (40+ files)**: Core library usage and device-specific APIs
+  - `api-reference/api-usage/` - General API usage patterns
+    - `api-overview.rst` - Phoenix6 API architecture overview
+    - `status-signals.rst` - Asynchronous data streaming via status signals
+    - `control-requests.rst` - Sending control commands to hardware
+    - `configuration.rst` - Device configuration and persistence
+    - `faults.rst` - Error handling and fault reporting
+    - `signal-logging.rst` - Data logging and telemetry
+  - `api-reference/device-specific/talonfx/` - TalonFX motor controller APIs
+    - `talonfx-control-intro.rst` - Introduction to TalonFX control
+    - `basic-pid-control.rst` - PID control implementation
+    - `motion-magic.rst` - Motion Magic trapezoidal profiles
+    - `open-loop-requests.rst` - Open-loop voltage/duty cycle control
+    - `closed-loop-requests.rst` - Closed-loop position/velocity control
+    - `remote-sensors.rst` - External sensor integration
+  - `api-reference/mechanisms/` - Pre-built mechanism implementations
+    - `swerve/` - Swerve drive APIs and simulation
+      - `swerve-overview.rst` - Swerve drive system overview
+      - `swerve-builder-api.rst` - Builder pattern for swerve configuration
+      - `swerve-requests.rst` - Swerve-specific control requests
+      - `swerve-simulation.rst` - Swerve drive simulation
+      - `using-swerve-api.rst` - Practical swerve API usage
+    - `differential/` - Differential drive mechanisms
+      - `differential-overview.rst` - Differential drive overview
+      - `differential-setup.rst` - Differential mechanism setup
+      - `differential-tuning.rst` - PID tuning for differential drives
+      - `using-differential-mech.rst` - Using differential mechanisms
+  - `api-reference/simulation/` - Hardware simulation
+    - `simulation-intro.rst` - Introduction to Phoenix6 simulation
+  - `api-reference/wpilib-integration/` - WPILib framework integration
+    - `motorcontroller-integration.rst` - MotorController class integration
+    - `sysid-integration/` - System identification integration
+      - `plumbing-and-running-sysid.rst` - SysId setup and execution
+    - `unit-testing.rst` - Unit testing with Phoenix6
+    - `epilogue-integration.rst` - Epilogue logging integration
+- **Hardware Reference (10 files)**: Device specifications and capabilities
+  - `hardware-reference/talonfx.rst` - TalonFX motor controller specifications
+  - `hardware-reference/talonfxs.rst` - TalonFX (small) specifications
+  - `hardware-reference/pigeon2.rst` - Pigeon2 IMU specifications and usage
+  - `hardware-reference/cancoder.rst` - CANCoder magnetic encoder specifications
+  - `hardware-reference/candle.rst` - CANdle LED controller
+  - `hardware-reference/canrange.rst` - CANrange distance sensor
+  - `hardware-reference/candi.rst` - CANdi device interface
+  - `hardware-reference/improving-performance-with-current-limits.rst` - Performance optimization
+  - `hardware-reference/pigeon-issues.rst` - Pigeon IMU troubleshooting
+- **CANivore (5 files)**: High-speed CAN bus system
+  - `canivore/canivore-intro.rst` - CANivore system introduction
+  - `canivore/canivore-api.rst` - CANivore API usage
+  - `canivore/canivore-config.rst` - CANivore configuration
+  - `canivore/canivore-setup.rst` - CANivore hardware setup
+  - `canivore/canivore-hardware-attached.rst` - Attached hardware management
+- **Migration (8 files)**: Upgrading from previous versions
+  - `migration/new-to-phoenix.rst` - New user introduction
+  - `migration/canbus-utilization.rst` - CAN bus utilization guidelines
+  - `migration/migration-guide/` - Migration from Phoenix 5
+    - `api-structure-guide.rst` - API structure changes
+    - `configuration-guide.rst` - Configuration migration
+    - `control-requests-guide.rst` - Control request changes
+    - `status-signals-guide.rst` - Status signal migration
+    - `closed-loop-guide.rst` - Closed-loop control migration
+    - `feature-replacements-guide.rst` - Feature replacement guide
+- **Troubleshooting (3 files)**: Debugging and diagnostics
+  - `troubleshooting/canbus-troubleshooting.rst` - CAN bus issues
+  - `troubleshooting/running-diagnostics.rst` - Diagnostic procedures
+- **Licensing (3 files)**: Software licensing information
+  - `licensing/what-is-licensing.rst` - Licensing overview
+  - `licensing/licensing.rst` - License details
+  - `licensing/team-licensing.rst` - Team licensing options
+- `support.rst` - Technical support resources
 
 ## Development Workflow
 

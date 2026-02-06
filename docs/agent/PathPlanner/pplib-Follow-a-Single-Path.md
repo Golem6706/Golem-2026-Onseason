@@ -20,7 +20,7 @@ public class RobotContainer {
     try{
         // Load the path you want to follow using its name in the GUI
         PathPlannerPath path = PathPlannerPath.fromPathFile("Example Path");
-        
+
         // Create a path following command using AutoBuilder. This will also trigger event markers.
         return AutoBuilder.followPath(path);
     } catch (Exception e) {
@@ -80,7 +80,7 @@ public class DriveSubsystem extends SubsystemBase {
   public Command followPathCommand(String pathName) {
     try{
         PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
-    
+
         return new FollowPathCommand(
                 path,
                 this::getPose, // Robot pose supplier
@@ -95,7 +95,7 @@ public class DriveSubsystem extends SubsystemBase {
                   // Boolean supplier that controls when the path will be mirrored for the red alliance
                   // This will flip the path being followed to the red side of the field.
                   // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-    
+
                   var alliance = DriverStation.getAlliance();
                   if (alliance.isPresent()) {
                     return alliance.get() == DriverStation.Alliance.Red;
@@ -198,7 +198,7 @@ public class DriveSubsystem extends SubsystemBase {
   public Command followPathCommand(String pathName) {
     try{
         PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
-    
+
         return new FollowPathCommand(
                 path,
                 this::getPose, // Robot pose supplier
@@ -210,7 +210,7 @@ public class DriveSubsystem extends SubsystemBase {
                   // Boolean supplier that controls when the path will be mirrored for the red alliance
                   // This will flip the path being followed to the red side of the field.
                   // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-    
+
                   var alliance = DriverStation.getAlliance();
                   if (alliance.isPresent()) {
                     return alliance.get() == DriverStation.Alliance.Red;

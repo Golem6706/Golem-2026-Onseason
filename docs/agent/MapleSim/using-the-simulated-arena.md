@@ -16,7 +16,7 @@ The simulation world, containing obstacles, game pieces, and robots, is stored i
 // Obtains the default instance of the simulation world, which is a Crescendo Arena.
 SimulatedArena.getInstance();
 // Overrides the default simulation
-SimulatedArena.overrideInstance(SimulatedArena newInstance); 
+SimulatedArena.overrideInstance(SimulatedArena newInstance);
 ```
 
 ---
@@ -75,8 +75,8 @@ SimulatedArena.getInstance().clearGamePieces();
 
 You can retrieve the positions of game pieces, including those on the ground and those launched into the air:
 
-=== "AdvantageKit" 
-      ```java 
+=== "AdvantageKit"
+      ```java
       void periodic() {
             // Get the positions of the fuel (both on the field and in the air)
             Pose3d[] fuelPoses = SimulatedArena.getInstance()
@@ -84,8 +84,8 @@ You can retrieve the positions of game pieces, including those on the ground and
             // Publish to telemetry using AdvantageKit
             Logger.recordOutput("FieldSimulation/FuelPositions", fuelPoses);
       }
-      ``` 
-=== "WPILib Networktables" 
+      ```
+=== "WPILib Networktables"
       ```java
       StructArrayPublisher<Pose3d> fuelPoses = NetworkTableInstance.getDefault()
             .getStructArrayTopic("MyPoseArray", Pose3d.struct)
@@ -100,4 +100,3 @@ You can retrieve the positions of game pieces, including those on the ground and
                   .toArray(Pose3d::new));
       }
       ```
-

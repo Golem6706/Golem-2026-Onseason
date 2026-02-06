@@ -43,7 +43,7 @@ public class DriveSubsystem extends SubsystemBase {
   public DriveSubsystem() {
     // All other subsystem initialization
     // ...
-    
+
     // Load the RobotConfig from the GUI settings. You should probably
     // store this in your Constants file
     RobotConfig config;
@@ -98,7 +98,7 @@ using namespace pathplanner;
 SwerveSubsystem::SwerveSubsystem(){
     // Do all subsystem initialization here
     // ...
-    
+
     // Load the RobotConfig from the GUI settings. You should probably
     // store this in your Constants file
     RobotConfig config = RobotConfig::fromGUISettings();
@@ -143,7 +143,7 @@ class SwerveSubsystem(Subsystem):
     def __init__(self):
         # Do all subsystem initialization here
         # ...
-        
+
         # Load the RobotConfig from the GUI settings. You should probably
         # store this in your Constants file
         config = RobotConfig.fromGUISettings()
@@ -162,7 +162,7 @@ class SwerveSubsystem(Subsystem):
             self.shouldFlipPath, # Supplier to control path flipping based on alliance color
             self # Reference to this subsystem to set requirements
         )
-    
+
     def shouldFlipPath():
         # Boolean supplier that controls when the path will be mirrored for the red alliance
         # This will flip the path being followed to the red side of the field.
@@ -183,7 +183,7 @@ public class DriveSubsystem extends SubsystemBase {
   public DriveSubsystem() {
     // All other subsystem initialization
     // ...
-    
+
     // Load the RobotConfig from the GUI settings. You should probably
     // store this in your Constants file
     RobotConfig config;
@@ -235,7 +235,7 @@ using namespace pathplanner;
 DriveSubsystem::DriveSubsystem(){
     // Do all subsystem initialization here
     // ...
-    
+
     // Load the RobotConfig from the GUI settings. You should probably
     // store this in your Constants file
     RobotConfig config = RobotConfig::fromGUISettings();
@@ -277,7 +277,7 @@ class DriveSubsystem(Subsystem):
     def __init__(self):
         # Do all subsystem initialization here
         # ...
-        
+
         # Load the RobotConfig from the GUI settings. You should probably
         # store this in your Constants file
         config = RobotConfig.fromGUISettings()
@@ -293,7 +293,7 @@ class DriveSubsystem(Subsystem):
             self.shouldFlipPath, # Supplier to control path flipping based on alliance color
             self # Reference to this subsystem to set requirements
         )
-    
+
     def shouldFlipPath():
         # Boolean supplier that controls when the path will be mirrored for the red alliance
         # This will flip the path being followed to the red side of the field.
@@ -445,17 +445,17 @@ frc2::Command* RobotContainer::getAutonomousCommand() {
 from pathplannerlib.auto import AutoBuilder
 
 class RobotContainer:
-    
+
     def __init__():
 
         # Build an auto chooser. This will use Commands.none() as the default option.
         self.autoChooser = AutoBuilder.buildAutoChooser()
-        
+
         # Another option that allows you to specify the default auto by its name
         # self.autoChooser = AutoBuilder.buildAutoChooser("My Default Auto")
-        
+
         SmartDashboard.putData("Auto Chooser", self.autoChooser)
-    
+
     def getAutonomousCommand():
         return self.autoChooser.getSelected()
 ```
@@ -493,13 +493,13 @@ public class RobotContainer {
 
     // For convenience a programmer could change this when going to competition.
     boolean isCompetition = true;
-    
+
     // Build an auto chooser. This will use Commands.none() as the default option.
     // As an example, this will only show autos that start with "comp" while at
     // competition as defined by the programmer
     autoChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
       (stream) -> isCompetition
-        ? stream.filter(auto -> auto.getName().startsWith("comp")) 
+        ? stream.filter(auto -> auto.getName().startsWith("comp"))
         : stream
     );
 
@@ -549,7 +549,7 @@ RobotContainer::RobotContainer() {
       return isCompetition ? autoCommand.GetName().starts_with("comp") : true;
     },
     "autoDefault", // If filled it will choosen always, regardless of filter
-  ); 
+  );
   */
 
   // Another option allows you to filter out current directories relative to deploy/pathplanner/auto directory
@@ -561,7 +561,7 @@ RobotContainer::RobotContainer() {
     {
       return isCompetition ? autoPath.compare("comp") > 0 : true;
     }
-  ); 
+  );
   */
 
   frc::SmartDashboard::PutData("Auto Chooser", &autoChooser);

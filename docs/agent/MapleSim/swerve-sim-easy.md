@@ -12,7 +12,7 @@ Before we start, we need to create a `SwerveDrive` interface or abstract class t
 
 ![](./media/subsystem%20abstraction.svg)
 
-#### Example drive subsystem abstraction: 
+#### Example drive subsystem abstraction:
 [View original source](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/blob/dev/templates/BaseTalonSwerve-maple-sim/src/main/java/frc/robot/subsystems/drive/SwerveDrive.java)
 ```java
 package frc.robot.subsystems.drive;
@@ -209,22 +209,22 @@ public interface SwerveDrive extends Subsystem {
     default void configurePPAutoBuilder() {
         AutoBuilder.configure(
                 // Use APIs from SwerveDrive interface
-                this::getPose, 
+                this::getPose,
                 this::setPose,
                 this::getMeasuredSpeeds,
                 (speeds) -> this.drive(speeds, false, true),
-                
+
                 // Configure the Auto PIDs
                 new PPHolonomicDriveController(
-                    Constants.AUTO_TRANSLATIONAL_PID_CONSTANT, 
+                    Constants.AUTO_TRANSLATIONAL_PID_CONSTANT,
                     Constants.AUTO_ROTATIONAL_PID_CONSTANT),
-                
+
                 // Specify the PathPlanner Robot Config
                 Constants.ROBOT_CONFIG,
-                
+
                 // Path Flipping: Determines if the path should be flipped based on the robot's alliance color
                 () -> DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue).equals(DriverStation.Alliance.Red),
-                
+
                 // Specify the drive subsystem as a requirement of the command
                 this);
     }

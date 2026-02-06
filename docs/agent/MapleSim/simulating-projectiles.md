@@ -77,7 +77,7 @@ fuelOnFly
         );
 ```
 
-!!! tip 
+!!! tip
       On Advantage Scope, you can visualize the two trajectories with different colors (e.g., green and red) to see if the fuel missed the target.
 
 ### Becoming GamePieceOnFieldSimulation
@@ -104,4 +104,3 @@ SimulatedArena.getInstance().addGamePieceProjectile(fuelOnFly);
 ```
 
 The real-time positions of the flying game pieces are also visualized with other game pieces, as described [here](./using-the-simulated-arena.md#visualizing-game-pieces).
-
