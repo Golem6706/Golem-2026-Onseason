@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
@@ -50,7 +51,8 @@ public class RobotContainer {
 
     // Controller
     //     private final CommandXboxController controller = new CommandXboxController(0);
-    private final DriverMap controller = new DriverMap.RightHandedXbox(0);
+    public final DriverMap controller = new DriverMap.RightHandedXbox(0);
+//     public final CommandXboxController operator = new CommandXboxController(1);
 
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> autoChooser;
@@ -174,8 +176,10 @@ public class RobotContainer {
         // controller.start().onTrue(Commands.runOnce(resetOdometry).ignoringDisable(true));
         controller.resetOdometryButton().onTrue(Commands.runOnce(resetOdometry).ignoringDisable(true));
 
-        controller.scoreButton().whileTrue(shooter.runShooter(12.0 * 0.7)); // Shoote first
-        controller.intakeButton().whileTrue(shooter.runFeeder(12.0 * 0.5)); // And then feede the ball to shooter
+        controller.scoreButton().onTrue(shooter.runShooterVelocity(3000));
+        controller.scoreButton().onFalse(shooter.runShooterVelocity(0));
+        controller.intakeButton().onTrue(shooter.runFeederVelocity(2000));
+        controller.intakeButton().onFalse(shooter.runFeederVelocity(0));
 
         // Auto-aiming binding
         controller
