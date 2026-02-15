@@ -25,9 +25,25 @@ public final class ShooterContants {
     }
 
     // Default configuration with 3 shooter motors and 2 feeder motors
+    // For Team 7601
+    // public static final ShooterHardwareConstants SHOOTERHARDWARE_CONSTANTS = new ShooterHardwareConstants(
+    //         new int[] {14, 15, 16}, new boolean[] {false, false, false}, new int[] {18, 19}, new boolean[] {false,
+    // false
+    //         });
+
+    // For Team 5522
+    // public static final ShooterHardwareConstants SHOOTERHARDWARE_CONSTANTS = new ShooterHardwareConstants(
+    //         new int[] {29, 30, 31}, new boolean[] {false, false, false}, new int[] {32, 33}, new boolean[] {false,
+    // false
+    //         });
+    // For Team 6706
     public static final ShooterHardwareConstants SHOOTERHARDWARE_CONSTANTS = new ShooterHardwareConstants(
-            new int[] {14, 15, 16}, new boolean[] {false, false, false}, new int[] {18, 19}, new boolean[] {false, false
+            new int[] {15, 16, 17, 18}, new boolean[] {false, false, false, false}, new int[] {14, 13}, new boolean[] {
+                false, false
             });
+    // Default voltage settings matching previous configuration
+    public static final VoltageSettings VOLTAGE_SETTINGS =
+            new VoltageSettings(new double[] {10.0, 10.0, 10.0, 10.0}, new double[] {6.0, 6.0});
 
     // PID constants for velocity control (RPM)
     public static final Slot0Configs SHOOTER_VELOCITY_GAINS = new Slot0Configs()
@@ -54,10 +70,6 @@ public final class ShooterContants {
         }
     }
 
-    // Default voltage settings matching previous configuration
-    public static final VoltageSettings VOLTAGE_SETTINGS =
-            new VoltageSettings(new double[] {10.0, 10.0, 10.0}, new double[] {4.0, 6.0});
-
     public static final Current SHOOTER_MOTORS_CURRENT_LIMIT = Amps.of(20);
-    public static final Current FEEDER_MOTORS_CURRENT_LIMIT = Amps.of(10);
+    public static final Current FEEDER_MOTORS_CURRENT_LIMIT = Amps.of(15);
 }

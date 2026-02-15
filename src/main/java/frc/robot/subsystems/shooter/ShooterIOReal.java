@@ -143,7 +143,7 @@ public class ShooterIOReal implements ShooterIO {
 
         // Configure follower motors for feeder (motors 1..n follow motor 0)
         for (int i = 1; i < feederCount; i++) {
-            feederMotors[i].setControl(new Follower(feederMotors[0].getDeviceID(), MotorAlignmentValue.Aligned));
+            feederMotors[i].setControl(new Follower(feederMotors[0].getDeviceID(), MotorAlignmentValue.Opposed));
         }
     }
 

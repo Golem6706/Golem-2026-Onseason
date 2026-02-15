@@ -101,6 +101,11 @@ public interface DriverMap extends Subsystem {
         public Trigger lockChassisWithXFormatButton() {
             return xboxController.x();
         }
+        
+        @Override
+        public Trigger lockToZeroAngle() {
+            return xboxController.a();
+        }
 
         @Override
         public Trigger autoAiming() {
@@ -110,11 +115,6 @@ public interface DriverMap extends Subsystem {
         @Override
         public Trigger intakeButton() {
             return xboxController.leftTrigger(0.5);
-        }
-
-        @Override
-        public Trigger lockToZeroAngle() {
-            return xboxController.a();
         }
 
         @Override
