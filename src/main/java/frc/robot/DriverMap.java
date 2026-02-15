@@ -101,7 +101,6 @@ public interface DriverMap extends Subsystem {
         public Trigger lockChassisWithXFormatButton() {
             return xboxController.x();
         }
-        
         @Override
         public Trigger lockToZeroAngle() {
             return xboxController.a();

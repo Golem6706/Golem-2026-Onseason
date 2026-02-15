@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
@@ -52,7 +51,7 @@ public class RobotContainer {
     // Controller
     //     private final CommandXboxController controller = new CommandXboxController(0);
     public final DriverMap controller = new DriverMap.RightHandedXbox(0);
-//     public final CommandXboxController operator = new CommandXboxController(1);
+    //     public final CommandXboxController operator = new CommandXboxController(1);
 
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> autoChooser;
