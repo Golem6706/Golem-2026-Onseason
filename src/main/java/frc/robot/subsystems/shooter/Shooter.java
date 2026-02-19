@@ -2,6 +2,7 @@ package frc.robot.subsystems.shooter;
 
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.AlertsManager;
@@ -51,6 +52,8 @@ public class Shooter extends SubsystemBase {
 
         // Initialize or update alerts based on current motor count
         updateAlerts();
+
+        if (DriverStation.isDisabled()) executeIdle();
 
         // Update alerts
         if (shooterMotorAlerts.length > 0 && inputs.shootersConnected != null) {
@@ -149,6 +152,11 @@ public class Shooter extends SubsystemBase {
     private void setFeederVelocity(double rpm) {
         if (!hardwareOK()) rpm = 0;
         io.setFeederVelocity(rpm);
+    }
+
+    private void executeIdle() {
+        setShooterMotorVolts(0.0);
+        setFeederMotorVolts(0.0);
     }
 
     public Command runShooter(double shooterMotorVolts) {
