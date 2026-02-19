@@ -76,7 +76,8 @@ public class ShooterIOReal implements ShooterIO {
             // Apply motor output config
             MotorOutputConfigs outputConfig = new MotorOutputConfigs()
                     .withInverted(inverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive)
-                    .withNeutralMode(NeutralModeValue.Brake);
+                    // .withNeutralMode(NeutralModeValue.Brake);
+                    .withNeutralMode(NeutralModeValue.Coast);
             shooterMotors[i].getConfigurator().apply(outputConfig);
 
             // Configure PID for velocity control on first motor (leader)
@@ -119,7 +120,8 @@ public class ShooterIOReal implements ShooterIO {
             // Apply motor output config
             MotorOutputConfigs outputConfig = new MotorOutputConfigs()
                     .withInverted(inverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive)
-                    .withNeutralMode(NeutralModeValue.Brake);
+                    // .withNeutralMode(NeutralModeValue.Brake);
+                    .withNeutralMode(NeutralModeValue.Coast);
             feederMotors[i].getConfigurator().apply(outputConfig);
 
             // Configure PID for velocity control on first motor (leader)
