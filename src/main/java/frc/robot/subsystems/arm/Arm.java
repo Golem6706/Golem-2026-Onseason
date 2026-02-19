@@ -75,7 +75,7 @@ public class Arm extends SubsystemBase {
 
         currentStateRad = new TrapezoidProfile.State(
                 HARDWARE_CONSTANTS.ARM_UPPER_HARD_LIMIT().in(Radians), 0.0);
-        setpoint = ARM_SETPOINT_ANGLE;
+        setpoint = ARM_STARTING_ANGLE;
 
         hardwareFaultDetected = false;
         encoderCalibrated = false;
@@ -109,6 +109,7 @@ public class Arm extends SubsystemBase {
      */
     private void executeIdle() {
         io.setArmMotorOutput(Volts.zero());
+        io.setIntakeMotorOutput(Volts.zero());
         currentStateRad = new TrapezoidProfile.State(getArmAngle().getRadians(), 0);
         previousVelocityRadPerSec = 0.0;
     }
@@ -214,18 +215,6 @@ public class Arm extends SubsystemBase {
         this.setpoint = setpoint;
     }
 
-    /**
-     * Moves to a given angle, cancels the setpoint when reached.
-     *
-     * <p>When brake mode is on, the arm will still hold at that angle.
-     *
-     * <p><b>Note: This command finishes automatically when the setpoint is reached, causing the default command to
-     * schedule. </b>
-     */
-    public Command moveToPosition(Angle setpoint) {
-        return run(() -> requestPosition(setpoint)).until(this::atReference);
-    }
-
     /** @return the measured arm angle, where zero is horizontally forward */
     public Rotation2d getArmAngle() {
         return Rotation2d.fromRadians(inputs.relativeEncoderAngledRad / HARDWARE_CONSTANTS.ARM_GEARING_REDUCTION())
@@ -243,5 +232,35 @@ public class Arm extends SubsystemBase {
     /** Sets the brake mode of the arm motor. */
     public void setArmMotorBrake(boolean brakeModeEnable) {
         io.setArmMotorBrake(brakeModeEnable);
+    }
+
+    /**
+     * Moves to a given angle, cancels the setpoint when reached.
+     *
+     * <p>When brake mode is on, the arm will still hold at that angle.
+     *
+     * <p><b>Note: This command finishes automatically when the setpoint is reached, causing the default command to
+     * schedule. </b>
+     */
+    public Command moveToPosition(Angle setpoint) {
+        return run(() -> requestPosition(setpoint)).until(this::atReference);
+    }
+
+    /** Dropping down the arm to intake the fuel */
+    public Command armDroppingCommand() {
+        return moveToPosition(ARM_INTAKING_ANGLE);
+    }
+
+    /** Upright the arm to the starting position */
+    public Command armUprightCommand() {
+        return moveToPosition(ARM_STARTING_ANGLE);
+    }
+
+    public Command intakeCommand() {
+        return run(() -> io.setIntakeMotorOutput(INTAKE_VOLTAGE));
+    }
+
+    public Command intakeIdleCommand() {
+        return run(() -> io.setIntakeMotorOutput(Volts.zero()));
     }
 }
