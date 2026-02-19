@@ -23,9 +23,12 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.ArmIOReal;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIOReal;
@@ -47,11 +50,12 @@ public class RobotContainer {
     private SwerveDriveSimulation driveSimulation = null;
 
     public Shooter shooter;
+    public Arm arm;
 
     // Controller
     //     private final CommandXboxController controller = new CommandXboxController(0);
     public final DriverMap controller = new DriverMap.RightHandedXbox(0);
-    //     public final CommandXboxController operator = new CommandXboxController(1);
+    public final CommandXboxController viceController = new CommandXboxController(1);
 
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> autoChooser;
@@ -109,6 +113,7 @@ public class RobotContainer {
         }
 
         shooter = new Shooter(new ShooterIOReal());
+        arm = new Arm(new ArmIOReal());
 
         // Set up auto routines
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -148,21 +153,13 @@ public class RobotContainer {
         //         .whileTrue(DriveCommands.joystickDriveAtAngle(
         //                 drive, () -> -controller.getLeftY(), () -> -controller.getLeftX(), () -> new Rotation2d()));
 
-        controller
-                .lockToZeroAngle()
-                .whileTrue(DriveCommands.joystickDriveAtAngle(
-                        drive,
-                        () -> controller.translationalAxisY().getAsDouble(),
-                        () -> controller.translationalAxisX().getAsDouble(),
-                        () -> new Rotation2d(Degrees.of(60))));
-
-        controller
-                .lockToZeroAngle()
-                .whileTrue(DriveCommands.joystickDriveAtAngle(
-                        drive,
-                        () -> controller.translationalAxisY().getAsDouble(),
-                        () -> controller.translationalAxisX().getAsDouble(),
-                        () -> new Rotation2d(vision.getTargetX(1).getDegrees())));
+        // controller
+        //         .lockToZeroAngle()
+        //         .whileTrue(DriveCommands.joystickDriveAtAngle(
+        //                 drive,
+        //                 () -> controller.translationalAxisY().getAsDouble(),
+        //                 () -> controller.translationalAxisX().getAsDouble(),
+        //                 () -> new Rotation2d(vision.getTargetX(1).getDegrees())));
 
         // Switch to X pattern when X button is pressed
         // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
@@ -175,34 +172,27 @@ public class RobotContainer {
         // controller.start().onTrue(Commands.runOnce(resetOdometry).ignoringDisable(true));
         controller.resetOdometryButton().onTrue(Commands.runOnce(resetOdometry).ignoringDisable(true));
 
-        controller.scoreButton().onTrue(shooter.runShooterVelocity(3000));
-        controller.scoreButton().onFalse(shooter.runShooterVelocity(0));
-        controller.intakeButton().onTrue(shooter.runFeederVelocity(2000));
-        controller.intakeButton().onFalse(shooter.runFeederVelocity(0));
+        controller
+                .startShooterMotorButton()
+                .onTrue(shooter.runShooterVelocity(3000))
+                .onFalse(shooter.runShooterVelocity(0.0));
 
+        controller
+                .startFeederToShootButton()
+                .whileTrue(shooter.runFeederVelocity(2000).alongWith(arm.intakeCommand()))
+                .whileFalse(shooter.runFeederVelocity(0.0).alongWith(arm.intakeIdleCommand()));
         // Auto-aiming binding
         controller
-                .autoAiming()
+                .autoAlignToHubButton()
                 .whileTrue(DriveCommands.autoAim(
                         drive,
                         () -> controller.translationalAxisY().getAsDouble(),
                         () -> controller.translationalAxisX().getAsDouble()));
 
-        // Example Coral Placement Code
-        // TODO: delete these code for your own project
-        /**
-         * if (Constants.currentMode == Constants.Mode.SIM) { // L4 placement controller.y().onTrue(Commands.runOnce(()
-         * -> SimulatedArena.getInstance() .addGamePieceProjectile(new ReefscapeCoralOnFly(
-         * driveSimulation.getSimulatedDriveTrainPose().getTranslation(), new Translation2d(0.4, 0),
-         * driveSimulation.getDriveTrainSimulatedChassisSpeedsFieldRelative(),
-         * driveSimulation.getSimulatedDriveTrainPose().getRotation(), Meters.of(2), MetersPerSecond.of(1.5),
-         * Degrees.of(-80))))); // L3 placement controller.b().onTrue(Commands.runOnce(() ->
-         * SimulatedArena.getInstance() .addGamePieceProjectile(new ReefscapeCoralOnFly(
-         * driveSimulation.getSimulatedDriveTrainPose().getTranslation(), new Translation2d(0.4, 0),
-         * driveSimulation.getDriveTrainSimulatedChassisSpeedsFieldRelative(),
-         * driveSimulation.getSimulatedDriveTrainPose().getRotation(), Meters.of(1.35), MetersPerSecond.of(1.5),
-         * Degrees.of(-60))))); }
-         */
+        controller.intakeButton().whileTrue(arm.intakeCommand());
+
+        viceController.leftBumper().onTrue(arm.armDroppingCommand());
+        viceController.rightBumper().onTrue(arm.armUprightCommand());
     }
 
     /**
