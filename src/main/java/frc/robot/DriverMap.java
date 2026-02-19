@@ -24,13 +24,19 @@ public interface DriverMap extends Subsystem {
 
     Trigger lockChassisWithXFormatButton();
 
-    Trigger autoAiming();
+    // Trigger lockToZeroAngle();
 
-    Trigger lockToZeroAngle();
+    /**
+     * Start intake button --> Enough fuels --> Align to Hub && Start shooter motor --> Start feeder motors and intake
+     * motors to shoot
+     */
+    Trigger autoAlignToHubButton();
 
     Trigger intakeButton();
 
-    Trigger scoreButton();
+    Trigger startShooterMotorButton();
+
+    Trigger startFeederToShootButton();
 
     DoubleSupplier translationalAxisX();
 
@@ -101,13 +107,12 @@ public interface DriverMap extends Subsystem {
         public Trigger lockChassisWithXFormatButton() {
             return xboxController.x();
         }
+        // @Override
+        // public Trigger lockToZeroAngle() {
+        //     return xboxController.a();
+        // }
         @Override
-        public Trigger lockToZeroAngle() {
-            return xboxController.a();
-        }
-
-        @Override
-        public Trigger autoAiming() {
+        public Trigger autoAlignToHubButton() {
             return xboxController.rightBumper();
         }
 
@@ -117,7 +122,12 @@ public interface DriverMap extends Subsystem {
         }
 
         @Override
-        public Trigger scoreButton() {
+        public Trigger startShooterMotorButton() {
+            return xboxController.leftBumper();
+        }
+
+        @Override
+        public Trigger startFeederToShootButton() {
             return xboxController.rightTrigger(0.5);
         }
 
@@ -217,7 +227,7 @@ public interface DriverMap extends Subsystem {
         }
 
         @Override
-        public Trigger autoAiming() {
+        public Trigger autoAlignToHubButton() {
             return ps5Controller.R1();
         }
 
@@ -227,12 +237,12 @@ public interface DriverMap extends Subsystem {
         }
 
         @Override
-        public Trigger lockToZeroAngle() {
-            return ps5Controller.cross();
+        public Trigger startShooterMotorButton() {
+            return ps5Controller.L1();
         }
 
         @Override
-        public Trigger scoreButton() {
+        public Trigger startFeederToShootButton() {
             return ps5Controller.R2();
         }
 
