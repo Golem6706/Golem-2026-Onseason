@@ -375,4 +375,9 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
             new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
         };
     }
+
+    /** Turns the motor brakes on / off */
+    public void setMotorBrake(boolean motorBrakeEnabled) {
+        for (Module module : modules) module.setMotorBrake(motorBrakeEnabled);
+    }
 }

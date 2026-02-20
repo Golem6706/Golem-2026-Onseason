@@ -6,16 +6,16 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.*;
 
 public final class ArmConstants {
-    public static final Current ARM_CURRENT_LIMIT = Amps.of(30.0);
-    public static final Voltage ARM_MAX_VOLTAGE = Volts.of(8.0);
+    public static final Current ARM_CURRENT_LIMIT = Amps.of(20.0);
+    public static final Voltage ARM_MAX_VOLTAGE = Volts.of(4.0);
 
     public static final Current INTAKE_CURRENT_LIMIT = Amps.of(30);
     public static final Voltage INTAKE_MAX_VOLTAGE = Volts.of(8.0);
     public static final Voltage INTAKE_VOLTAGE = Volts.of(5.0);
 
     // The setpoint angle for arm to intake from ground
-    public static final Angle ARM_INTAKING_ANGLE = Degrees.of(90.0);
-    public static final Angle ARM_STARTING_ANGLE = Degrees.of(0.0);
+    public static final Angle ARM_INTAKING_ANGLE = Degrees.of(-19.88);
+    public static final Angle ARM_STARTING_ANGLE = Degrees.of(62.34);
 
     public record ArmHardwareConstants(
             Distance ARM_COM_LENGTH,
@@ -26,7 +26,8 @@ public final class ArmConstants {
             Angle ARM_LOWER_HARD_LIMIT,
             Angle ABSOLUTE_ENCODER_READING_AT_UPPER_LIM,
             Angle ABSOLUTE_ENCODER_READING_AT_LOWER_LIM,
-            int ABSOLUTE_ENCODER_CHANNEL,
+            //     int ABSOLUTE_ENCODER_CHANNEL,
+            int ABSOLUTE_ENCODER_ID,
             boolean ABSOLUTE_ENCODER_INVERTED,
             int ARM_MOTOR_ID,
             boolean ARM_MOTOR_INVERTED,
@@ -39,16 +40,16 @@ public final class ArmConstants {
             DCMotor.getKrakenX60(1),
             45 * 32 / 18,
             // Following data need to be measured on real Robot
-            Degrees.of(90.0),
-            Degrees.of(0.0),
-            Rotation.of(0.11),
-            Rotation.of(0.11),
-            0,
+            Degrees.of(63.0),
+            Degrees.of(-20.0),
+            Rotation.of(1.65),
+            Rotation.of(-3.1),
+            22,
             true,
-            19,
+            21,
             false,
             20,
-            false);
+            true);
 
     public record ArmPIDConstants(
             double kS,

@@ -112,6 +112,7 @@ public class Arm extends SubsystemBase {
         io.setIntakeMotorOutput(Volts.zero());
         currentStateRad = new TrapezoidProfile.State(getArmAngle().getRadians(), 0);
         previousVelocityRadPerSec = 0.0;
+        logControlLoops(0, 0, 0);
     }
 
     private double previousVelocityRadPerSec = 0.0;
@@ -232,6 +233,11 @@ public class Arm extends SubsystemBase {
     /** Sets the brake mode of the arm motor. */
     public void setArmMotorBrake(boolean brakeModeEnable) {
         io.setArmMotorBrake(brakeModeEnable);
+    }
+
+    /** Sets the brake mode of the arm motor. */
+    public void setIntakeMotorBrake(boolean brakeModeEnable) {
+        io.setIntakeMotorBrake(brakeModeEnable);
     }
 
     /**

@@ -131,4 +131,13 @@ public class Module {
     public double getFFCharacterizationVelocity() {
         return Units.radiansToRotations(inputs.driveVelocityRadPerSec);
     }
+
+    private boolean brakeEnabled = true;
+
+    public void setMotorBrake(boolean enableMotorBrake) {
+        if (brakeEnabled == enableMotorBrake) return;
+        io.setDriveBrake(enableMotorBrake);
+        io.setSteerBrake(enableMotorBrake);
+        this.brakeEnabled = enableMotorBrake;
+    }
 }

@@ -21,6 +21,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -141,6 +142,14 @@ public class RobotContainer {
         // Default command, normal field-relative drive
         // drive.setDefaultCommand(DriveCommands.joystickDrive(
         //         drive, () -> -controller.getLeftY(), () -> -controller.getLeftX(), () -> -controller.getRightX()));
+
+        SmartDashboard.putData(
+                "Enable Motor Brake",
+                Commands.runOnce(() -> setMotorBrake(true)).ignoringDisable(true));
+        SmartDashboard.putData(
+                "Disable Motor Brake",
+                Commands.runOnce(() -> setMotorBrake(false)).ignoringDisable(true));
+
         drive.setDefaultCommand(DriveCommands.joystickDrive(
                 drive,
                 () -> controller.translationalAxisY().getAsDouble(),
@@ -217,5 +226,17 @@ public class RobotContainer {
         SimulatedArena.getInstance().simulationPeriodic();
         Logger.recordOutput("FieldSimulation/RobotPosition", driveSimulation.getSimulatedDriveTrainPose());
         Logger.recordOutput("FieldSimulation/Fuel", SimulatedArena.getInstance().getGamePiecesArrayByType("Fuel"));
+    }
+
+    private boolean motorBrakeEnabled = false;
+
+    public void setMotorBrake(boolean brakeModeEnable) {
+        if (this.motorBrakeEnabled == brakeModeEnable) return;
+        System.out.println("Set motor brake: " + brakeModeEnable);
+        drive.setMotorBrake(brakeModeEnable);
+        arm.setIntakeMotorBrake(brakeModeEnable);
+        arm.setArmMotorBrake(brakeModeEnable);
+
+        this.motorBrakeEnabled = brakeModeEnable;
     }
 }

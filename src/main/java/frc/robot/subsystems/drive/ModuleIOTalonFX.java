@@ -248,4 +248,22 @@ public class ModuleIOTalonFX implements ModuleIO {
                     case TorqueCurrentFOC -> positionTorqueCurrentRequest.withPosition(rotation.getRotations());
                 });
     }
+
+    boolean driveBrakeEnabled = true;
+
+    @Override
+    public void setDriveBrake(boolean enableDriveBrake) {
+        if (driveBrakeEnabled == enableDriveBrake) return;
+        driveTalon.setNeutralMode(enableDriveBrake ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+        this.driveBrakeEnabled = enableDriveBrake;
+    }
+
+    boolean steerBrakeEnabled = true;
+
+    @Override
+    public void setSteerBrake(boolean enableSteerBrake) {
+        if (this.steerBrakeEnabled == enableSteerBrake) return;
+        turnTalon.setNeutralMode(enableSteerBrake ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+        this.steerBrakeEnabled = enableSteerBrake;
+    }
 }

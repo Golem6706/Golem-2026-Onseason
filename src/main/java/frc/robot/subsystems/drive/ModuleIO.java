@@ -52,4 +52,10 @@ public interface ModuleIO {
 
     /** Run the turn motor to the specified rotation. */
     public default void setTurnPosition(Rotation2d rotation) {}
+
+    /** Enable or disable brake mode on the drive motor. */
+    default void setDriveBrake(boolean enableDriveBrake) {}
+
+    /** Enable or disable brake mode on the turn motor. */
+    default void setSteerBrake(boolean enableSteerBrake) {}
 }
