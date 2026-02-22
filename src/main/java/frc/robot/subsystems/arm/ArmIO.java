@@ -49,6 +49,8 @@ public interface ArmIO {
             // Arm Motor info.
             table.put("absoluteEncoderAnglePresent", absoluteEncoderAngle.isPresent());
             table.put("absoluteEncoderAngle", absoluteEncoderAngle.orElse(Rotation2d.kZero));
+            // System.out.println("%%%%%%%%  Arm/Raw Encoder Reading from log " + absoluteEncoderAngle);
+
             table.put("armMotorConnected", armMotorConnected);
             table.put("relativeEncoerAngledRad", relativeEncoderAngledRad);
             table.put("encoderVelocityRadPerSec", relativeEncoderVelocityRadPerSec);
@@ -66,6 +68,7 @@ public interface ArmIO {
             absoluteEncoderAngle = absoluteEnconderAnglePresent
                     ? Optional.of(table.get("absoluteEncoderAngle", Rotation2d.kZero))
                     : Optional.empty();
+
             armMotorConnected = table.get("armMotorConnected", armMotorConnected);
             relativeEncoderAngledRad = table.get("relativeEncoerAngledRad", 0.0);
             relativeEncoderVelocityRadPerSec = table.get("encoderVelocityRadPerSec", 0.0);

@@ -119,6 +119,12 @@ public class ArmIOReal implements ArmIO {
                 ? Optional.of(new Rotation2d(absoluteEncoderAngle.getValue()).minus(ABSOLUTE_ENCODER_OFFSET))
                 : Optional.empty();
 
+        // System.out.println("AbsoluteEncoderAngle in ArmIOReal is "
+        //         + Rotation2d.fromRotations(absoluteEncoderAngle.getValueAsDouble()));
+        // System.out.println("ABSOLUTE_ENCODER_READING_AT_UPPER_LIM is "
+        //         + new Rotation2d(HARDWARE_CONSTANTS.ABSOLUTE_ENCODER_READING_AT_UPPER_LIM()));
+        // System.out.println("ARM_UPPER_HARD_LIMIT is " + new Rotation2d(HARDWARE_CONSTANTS.ARM_UPPER_HARD_LIMIT()));
+        // System.out.println("%%%%%%%ABSOLUTE_ENCODER_OFFSET is " + ABSOLUTE_ENCODER_OFFSET);
         // inputs.absoluteEncoderAngle = absoluteEncoder.isConnected()
         //         ? Optional.of(Rotation2d.fromRotations(
         //                         absoluteEncoder.getAbsolutePosition().getValueAsDouble()

@@ -181,15 +181,13 @@ public class RobotContainer {
         // controller.start().onTrue(Commands.runOnce(resetOdometry).ignoringDisable(true));
         controller.resetOdometryButton().onTrue(Commands.runOnce(resetOdometry).ignoringDisable(true));
 
-        controller
-                .startShooterMotorButton()
-                .onTrue(shooter.runShooterVelocity(3000))
-                .onFalse(shooter.runShooterVelocity(0.0));
+        controller.startShooterMotorButton().whileTrue(shooter.runShooterVelocity(-3000));
+        // .onFalse(shooter.runShooterVelocity(0.0));
 
         controller
                 .startFeederToShootButton()
-                .whileTrue(shooter.runFeederVelocity(2000).alongWith(arm.intakeCommand()))
-                .whileFalse(shooter.runFeederVelocity(0.0).alongWith(arm.intakeIdleCommand()));
+                .whileTrue(shooter.runFeederVelocity(2000).alongWith(arm.intakeCommand()));
+        // .whileFalse(shooter.runFeederVelocity(0.0).alongWith(arm.intakeIdleCommand()));
         // Auto-aiming binding
         controller
                 .autoAlignToHubButton()
@@ -231,12 +229,12 @@ public class RobotContainer {
     private boolean motorBrakeEnabled = false;
 
     public void setMotorBrake(boolean brakeModeEnable) {
-        if (this.motorBrakeEnabled == brakeModeEnable) return;
+        // if (this.motorBrakeEnabled == brakeModeEnable) return;
         System.out.println("Set motor brake: " + brakeModeEnable);
         drive.setMotorBrake(brakeModeEnable);
         arm.setIntakeMotorBrake(brakeModeEnable);
         arm.setArmMotorBrake(brakeModeEnable);
 
-        this.motorBrakeEnabled = brakeModeEnable;
+        // this.motorBrakeEnabled = brakeModeEnable;
     }
 }

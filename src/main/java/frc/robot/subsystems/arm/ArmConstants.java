@@ -11,11 +11,11 @@ public final class ArmConstants {
 
     public static final Current INTAKE_CURRENT_LIMIT = Amps.of(30);
     public static final Voltage INTAKE_MAX_VOLTAGE = Volts.of(8.0);
-    public static final Voltage INTAKE_VOLTAGE = Volts.of(5.0);
+    public static final Voltage INTAKE_VOLTAGE = Volts.of(7.0);
 
     // The setpoint angle for arm to intake from ground
-    public static final Angle ARM_INTAKING_ANGLE = Degrees.of(-19.88);
-    public static final Angle ARM_STARTING_ANGLE = Degrees.of(62.34);
+    public static final Angle ARM_INTAKING_ANGLE = Degrees.of(0); // -19.88
+    public static final Angle ARM_STARTING_ANGLE = Degrees.of(-57.4); // 62.34
 
     public record ArmHardwareConstants(
             Distance ARM_COM_LENGTH,
@@ -25,7 +25,7 @@ public final class ArmConstants {
             Angle ARM_UPPER_HARD_LIMIT,
             Angle ARM_LOWER_HARD_LIMIT,
             Angle ABSOLUTE_ENCODER_READING_AT_UPPER_LIM,
-            Angle ABSOLUTE_ENCODER_READING_AT_LOWER_LIM,
+            //     Angle ABSOLUTE_ENCODER_READING_AT_LOWER_LIM,
             //     int ABSOLUTE_ENCODER_CHANNEL,
             int ABSOLUTE_ENCODER_ID,
             boolean ABSOLUTE_ENCODER_INVERTED,
@@ -40,10 +40,10 @@ public final class ArmConstants {
             DCMotor.getKrakenX60(1),
             45 * 32 / 18,
             // Following data need to be measured on real Robot
-            Degrees.of(63.0),
-            Degrees.of(-20.0),
-            Rotation.of(1.65),
-            Rotation.of(-3.1),
+            Degrees.of(-57.4),
+            Degrees.of(0.0),
+            Rotation.of(0.123), // 1.65
+            //     Rotation.of(2.9), // -3.1
             22,
             true,
             21,
