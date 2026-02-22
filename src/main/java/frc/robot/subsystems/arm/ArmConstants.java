@@ -15,7 +15,7 @@ public final class ArmConstants {
 
     // The setpoint angle for arm to intake from ground
     public static final Angle ARM_INTAKING_ANGLE = Degrees.of(0); // -19.88
-    public static final Angle ARM_STARTING_ANGLE = Degrees.of(-57.4); // 62.34
+    public static final Angle ARM_STARTING_ANGLE = Degrees.of(95); // 62.34
 
     public record ArmHardwareConstants(
             Distance ARM_COM_LENGTH,
@@ -40,12 +40,12 @@ public final class ArmConstants {
             DCMotor.getKrakenX60(1),
             45 * 32 / 18,
             // Following data need to be measured on real Robot
-            Degrees.of(-57.4),
+            Degrees.of(95.0),
             Degrees.of(0.0),
-            Rotation.of(0.123), // 1.65
+            Rotation.of(-0.208), // 1.65
             //     Rotation.of(2.9), // -3.1
             22,
-            true,
+            false,
             21,
             false,
             20,
@@ -63,7 +63,7 @@ public final class ArmConstants {
 
     public static final ArmPIDConstants PID_CONSTANTS = new ArmPIDConstants(
             0.05,
-            0.02,
+            0.08,
             1.51,
             0.01,
             6.0 / Math.toRadians(30),
