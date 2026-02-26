@@ -35,6 +35,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+import org.ironmaple.utils.FieldMirroringUtils;
 
 public class DriveCommands {
     private static final double DEADBAND = 0.1;
@@ -261,8 +262,7 @@ public class DriveCommands {
     }
 
     // Target positions for auto-aiming (example coordinates - adjust as needed)
-    public static final Translation2d BLUE_TARGET_POSITION = new Translation2d(8.0, 4.0); // Example: near speaker
-    public static final Translation2d RED_TARGET_POSITION = new Translation2d(8.0, 4.0); // Will be mirrored
+    public static final Translation2d BLUE_TARGET_POSITION = new Translation2d(17.548 - 11.915, 4.0);
 
     /**
      * Field relative drive command that aims at a target position on the field. Uses joystick for linear control and
@@ -275,7 +275,7 @@ public class DriveCommands {
             Translation2d robotPosition = drive.getPose().getTranslation();
             Translation2d targetPosition = targetSupplier.get();
             Translation2d delta = targetPosition.minus(robotPosition);
-            return new Rotation2d(Math.atan2(delta.getY(), delta.getX()));
+            return delta.getAngle();
         });
     }
 
@@ -283,17 +283,11 @@ public class DriveCommands {
     public static Command aimAtTarget(
             Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier, Translation2d blueAllianceTarget) {
 
-        return joystickDriveAtTarget(drive, xSupplier, ySupplier, () -> {
-            // Mirror target position for red alliance
-            // Assuming FieldMirroringUtils has a method to mirror coordinates
-            // If not, we'll implement basic mirroring logic
-            if (DriverStation.getAlliance().isPresent()
-                    && DriverStation.getAlliance().get() == Alliance.Red) {
-                // Mirror across field center (assuming field is 16.54m x 8.02m)
-                return new Translation2d(16.54 - blueAllianceTarget.getX(), blueAllianceTarget.getY());
-            }
-            return blueAllianceTarget;
-        });
+        return joystickDriveAtTarget(
+                drive,
+                xSupplier,
+                ySupplier,
+                () -> FieldMirroringUtils.toCurrentAllianceTranslation(blueAllianceTarget));
     }
 
     /** Auto-aiming command for the current season's target with reduced sensitivity (0.3x). */
