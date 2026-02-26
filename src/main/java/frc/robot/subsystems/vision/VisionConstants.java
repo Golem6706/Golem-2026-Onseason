@@ -30,17 +30,16 @@ public class VisionConstants {
     public static String camera1Name = "frontRightCam";
 
     // Robot to camera transforms
-    // (Not used by Limelight, configure in web UI instead)
     public static Transform3d robotToCamera0 = new Transform3d(
-            Inches.of(27.5).div(2), // Forward 27.5/2 inch
-            Inches.of(24.25).div(2), // Leftward 24.25/2 inch
-            Inches.of(2).plus(Inches.of(4)), // Height 2 inch + Chassis Height 4 inch
-            new Rotation3d(Degrees.zero(), Degrees.of(-24), Degrees.zero())); // Pitch upwards 24 degrees
+            Inches.of(-6.99), // Forward 27.5/2 inch
+            Inches.of(7.6), // Leftward 24.25/2 inch
+            Inches.of(22.44).plus(Inches.of(6)), // Height 22.44 inch + Chassis Height 6 inch
+            new Rotation3d(Degrees.zero(), Degrees.of(-20), Degrees.zero())); // Pitch upwards 24 degrees
     public static Transform3d robotToCamera1 = new Transform3d(
-            Inches.of(27.5).div(2), // Forward 27.5/2 inch
-            Inches.of(24.25).div(2).times(-1), // Rightwards 24.25/2 inch
-            Inches.of(2).plus(Inches.of(4)), // Height 2 inch + Chassis Height 4 inch
-            new Rotation3d(Degrees.zero(), Degrees.of(-24), Degrees.zero())); // Pitch upwards 24 degrees
+            Inches.of(-6.99), // Forward 27.5/2 inch
+            Inches.of(-7.6), // Rightw
+            Inches.of(22.44).plus(Inches.of(6)), // Height 2 inch + Chassis Height 4 inch
+            new Rotation3d(Degrees.zero(), Degrees.of(-20), Degrees.zero())); // Pitch upwards 24 degrees
 
     // Basic filtering thresholds
     public static double maxAmbiguity = 0.3;
