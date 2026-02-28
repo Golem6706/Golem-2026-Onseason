@@ -36,6 +36,7 @@ import frc.robot.subsystems.shooter.ShooterIOReal;
 import frc.robot.subsystems.vision.*;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+import org.ironmaple.utils.FieldMirroringUtils;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -175,18 +176,25 @@ public class RobotContainer {
         controller.lockChassisWithXFormatButton().whileTrue(Commands.runOnce(drive::stopWithX, drive));
 
         // Reset gyro / odometry
+        // final Runnable resetOdometry = Constants.currentMode == Constants.Mode.SIM
+        //         ? () -> drive.resetOdometry(driveSimulation.getSimulatedDriveTrainPose())
+        //         : () -> drive.resetOdometry(new Pose2d(drive.getPose().getTranslation(), new Rotation2d()));
         final Runnable resetOdometry = Constants.currentMode == Constants.Mode.SIM
                 ? () -> drive.resetOdometry(driveSimulation.getSimulatedDriveTrainPose())
-                : () -> drive.resetOdometry(new Pose2d(drive.getPose().getTranslation(), new Rotation2d()));
+                : () -> drive.resetOdometry(new Pose2d(
+                        drive.getPose().getTranslation(), FieldMirroringUtils.getCurrentAllianceDriverStationFacing()));
         // controller.start().onTrue(Commands.runOnce(resetOdometry).ignoringDisable(true));
         controller.resetOdometryButton().onTrue(Commands.runOnce(resetOdometry).ignoringDisable(true));
 
-        controller.startShooterMotorButton().whileTrue(shooter.runShooterVelocity(-3000));
-        // .onFalse(shooter.runShooterVelocity(0.0));
+        controller
+                .startShooterMotorButton()
+                .whileTrue(shooter.runShooterVelocity(3000))
+                .onFalse(shooter.runShooterVelocity(0.0));
 
         controller
                 .startFeederToShootButton()
-                .whileTrue(shooter.runFeederVelocity(2000).alongWith(arm.intakeCommand()));
+                .whileTrue(shooter.runFeederVelocity(2000))
+                .onFalse(shooter.runFeederVelocity(0.0));
         // .whileFalse(shooter.runFeederVelocity(0.0).alongWith(arm.intakeIdleCommand()));
         // Auto-aiming binding
         controller
