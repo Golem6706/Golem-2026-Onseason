@@ -11,10 +11,11 @@ public final class ArmConstants {
 
     public static final Current INTAKE_CURRENT_LIMIT = Amps.of(30);
     public static final Voltage INTAKE_MAX_VOLTAGE = Volts.of(8.0);
-    public static final Voltage INTAKE_VOLTAGE = Volts.of(7.0);
+    public static final Voltage INTAKE_VOLTAGE = Volts.of(6.0);
 
     // The setpoint angle for arm to intake from ground
-    public static final Angle ARM_INTAKING_ANGLE = Degrees.of(15);
+    public static final Angle ARM_INTAKING_ANGLE = Degrees.of(40);
+    public static final Angle ARM_ANGLE_HOLDING = Degrees.of(40);
     public static final Angle ARM_STARTING_ANGLE = Degrees.of(90);
 
     public record ArmHardwareConstants(
@@ -29,24 +30,28 @@ public final class ArmConstants {
             //     int ABSOLUTE_ENCODER_CHANNEL,
             int ABSOLUTE_ENCODER_ID,
             boolean ABSOLUTE_ENCODER_INVERTED,
-            int ARM_MOTOR_ID,
-            boolean ARM_MOTOR_INVERTED,
+            int ARM_MOTOR_LEFT_ID,
+            boolean ARM_MOTOR_LEFT_INVERTED,
+            int ARM_MOTOR_RIGHT_ID,
+            boolean ARM_MOTOR_RIGHT_INVERTED,
             int INTAKE_MOTOR_ID,
             boolean INTAKE_MOTOR_INVERTED) {}
 
     public static final ArmHardwareConstants HARDWARE_CONSTANTS = new ArmHardwareConstants(
             Centimeters.of(33),
             Kilograms.of(3.0),
-            DCMotor.getKrakenX60(1),
-            45 * 32 / 18,
+            DCMotor.getKrakenX60(2),
+            9 * 32 / 16,
             // Following data need to be measured on real Robot
             Degrees.of(90.0),
             Degrees.of(0.0),
-            Rotation.of(-0.177),
+            Rotation.of(0.042), // 0.054
             //     Rotation.of(2.9), // -3.1
+            21,
+            false,
             22,
             false,
-            21,
+            19,
             false,
             20,
             true);
@@ -64,7 +69,7 @@ public final class ArmConstants {
     public static final ArmPIDConstants PID_CONSTANTS = new ArmPIDConstants(
             0.05,
             0.08,
-            1.51,
+            0.34,
             0.01,
             6.0 / Math.toRadians(30),
             RotationsPerSecond.of(1),

@@ -9,10 +9,12 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -35,7 +37,8 @@ public class ArmIOReal implements ArmIO {
             .minus(new Rotation2d(HARDWARE_CONSTANTS.ARM_UPPER_HARD_LIMIT()));
 
     // Arm Hardware
-    private final TalonFX armTalon;
+    private final TalonFX armTalonLeft;
+    private final TalonFX armTalonRight;
     private final TalonFX intakeTalon;
     //     private final DutyCycleEncoder absoluteEncoder;
     private final CANcoder absoluteEncoder;
@@ -52,7 +55,8 @@ public class ArmIOReal implements ArmIO {
 
     public ArmIOReal() {
         // Initialize Hardwares
-        this.armTalon = new TalonFX(HARDWARE_CONSTANTS.ARM_MOTOR_ID());
+        this.armTalonRight = new TalonFX(HARDWARE_CONSTANTS.ARM_MOTOR_RIGHT_ID());
+        this.armTalonLeft = new TalonFX(HARDWARE_CONSTANTS.ARM_MOTOR_LEFT_ID());
         this.intakeTalon = new TalonFX(HARDWARE_CONSTANTS.INTAKE_MOTOR_ID());
         // this.absoluteEncoder = new DutyCycleEncoder(HARDWARE_CONSTANTS.ABSOLUTE_ENCODER_CHANNEL());
         this.absoluteEncoder = new CANcoder(HARDWARE_CONSTANTS.ABSOLUTE_ENCODER_ID());
@@ -66,16 +70,32 @@ public class ArmIOReal implements ArmIO {
                                         : SensorDirectionValue.CounterClockwise_Positive));
 
         // Configure Motor
-        armTalon.getConfigurator()
+        armTalonRight
+                .getConfigurator()
                 .apply(new MotorOutputConfigs()
                         .withInverted(
-                                HARDWARE_CONSTANTS.ARM_MOTOR_INVERTED()
+                                HARDWARE_CONSTANTS.ARM_MOTOR_RIGHT_INVERTED()
                                         ? InvertedValue.Clockwise_Positive
                                         : InvertedValue.CounterClockwise_Positive));
-        armTalon.getConfigurator()
+        armTalonRight
+                .getConfigurator()
                 .apply(new CurrentLimitsConfigs()
                         .withSupplyCurrentLimitEnable(true)
                         .withSupplyCurrentLimit(ARM_CURRENT_LIMIT));
+
+        armTalonLeft
+                .getConfigurator()
+                .apply(new MotorOutputConfigs()
+                        .withInverted(
+                                HARDWARE_CONSTANTS.ARM_MOTOR_LEFT_INVERTED()
+                                        ? InvertedValue.Clockwise_Positive
+                                        : InvertedValue.CounterClockwise_Positive));
+        armTalonLeft
+                .getConfigurator()
+                .apply(new CurrentLimitsConfigs()
+                        .withSupplyCurrentLimitEnable(true)
+                        .withSupplyCurrentLimit(ARM_CURRENT_LIMIT));
+
         intakeTalon
                 .getConfigurator()
                 .apply(new MotorOutputConfigs()
@@ -89,12 +109,14 @@ public class ArmIOReal implements ArmIO {
                         .withSupplyCurrentLimitEnable(true)
                         .withSupplyCurrentLimit(INTAKE_CURRENT_LIMIT));
 
+        armTalonLeft.setControl(new Follower(armTalonRight.getDeviceID(), MotorAlignmentValue.Opposed));
+
         // Obtain Motor Status Signals
         this.absoluteEncoderAngle = this.absoluteEncoder.getAbsolutePosition();
-        this.relativeEncoderAngle = armTalon.getPosition();
-        this.relativeEncoderVelocity = armTalon.getVelocity();
-        this.armMotorSupplyCurrent = armTalon.getSupplyCurrent();
-        this.armMotorSupplyVoltage = armTalon.getSupplyVoltage();
+        this.relativeEncoderAngle = armTalonRight.getPosition();
+        this.relativeEncoderVelocity = armTalonRight.getVelocity();
+        this.armMotorSupplyCurrent = armTalonRight.getSupplyCurrent();
+        this.armMotorSupplyVoltage = armTalonRight.getSupplyVoltage();
         BaseStatusSignal.setUpdateFrequencyForAll(
                 100,
                 absoluteEncoderAngle,
@@ -102,7 +124,8 @@ public class ArmIOReal implements ArmIO {
                 relativeEncoderVelocity,
                 armMotorSupplyCurrent,
                 armMotorSupplyVoltage);
-        armTalon.optimizeBusUtilization();
+        armTalonRight.optimizeBusUtilization();
+        armTalonLeft.optimizeBusUtilization();
         absoluteEncoder.optimizeBusUtilization();
 
         this.intakeMotorSupplyCurrent = intakeTalon.getSupplyCurrent();
@@ -118,19 +141,6 @@ public class ArmIOReal implements ArmIO {
         inputs.absoluteEncoderAngle = statusCode.isOK()
                 ? Optional.of(new Rotation2d(absoluteEncoderAngle.getValue()).minus(ABSOLUTE_ENCODER_OFFSET))
                 : Optional.empty();
-
-        // System.out.println("AbsoluteEncoderAngle in ArmIOReal is "
-        //         + Rotation2d.fromRotations(absoluteEncoderAngle.getValueAsDouble()));
-        // System.out.println("ABSOLUTE_ENCODER_READING_AT_UPPER_LIM is "
-        //         + new Rotation2d(HARDWARE_CONSTANTS.ABSOLUTE_ENCODER_READING_AT_UPPER_LIM()));
-        // System.out.println("ARM_UPPER_HARD_LIMIT is " + new Rotation2d(HARDWARE_CONSTANTS.ARM_UPPER_HARD_LIMIT()));
-        // System.out.println("%%%%%%%ABSOLUTE_ENCODER_OFFSET is " + ABSOLUTE_ENCODER_OFFSET);
-        // inputs.absoluteEncoderAngle = absoluteEncoder.isConnected()
-        //         ? Optional.of(Rotation2d.fromRotations(
-        //                         absoluteEncoder.getAbsolutePosition().getValueAsDouble()
-        //                                 * (HARDWARE_CONSTANTS.ABSOLUTE_ENCODER_INVERTED() ? -1 : 1))
-        //                 .minus(ABSOLUTE_ENCODER_OFFSET))
-        //         : Optional.empty();
         // Refresh armMotor signals
         statusCode = BaseStatusSignal.refreshAll(
                 relativeEncoderAngle, relativeEncoderVelocity, armMotorSupplyCurrent, armMotorSupplyVoltage);
@@ -157,13 +167,13 @@ public class ArmIOReal implements ArmIO {
     @Override
     public void setArmMotorOutput(Voltage voltage) {
         voltageOut.withOutput(voltage);
-        armTalon.setControl(voltageOut);
+        armTalonRight.setControl(voltageOut);
     }
 
     @Override
     public void setArmMotorBrake(boolean brakeModeEnable) {
         NeutralModeValue value = brakeModeEnable ? NeutralModeValue.Brake : NeutralModeValue.Coast;
-        armTalon.setNeutralMode(value, 0.1);
+        armTalonRight.setNeutralMode(value, 0.1);
     }
 
     @Override

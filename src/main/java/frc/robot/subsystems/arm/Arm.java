@@ -257,6 +257,10 @@ public class Arm extends SubsystemBase {
         return moveToPosition(ARM_INTAKING_ANGLE);
     }
 
+    public Command armHoldingCommand() {
+        return moveToPosition(ARM_ANGLE_HOLDING);
+    }
+
     /** Upright the arm to the starting position */
     public Command armUprightCommand() {
         return moveToPosition(ARM_STARTING_ANGLE);
@@ -264,6 +268,10 @@ public class Arm extends SubsystemBase {
 
     public Command intakeCommand() {
         return run(() -> io.setIntakeMotorOutput(INTAKE_VOLTAGE));
+    }
+
+    public Command intakeStopCommand() {
+        return run(() -> io.setIntakeMotorOutput(Volts.zero()));
     }
 
     public Command intakeIdleCommand() {

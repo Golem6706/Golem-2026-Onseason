@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
@@ -56,7 +57,7 @@ public class RobotContainer {
 
     // Controller
     //     private final CommandXboxController controller = new CommandXboxController(0);
-    public final DriverMap controller = new DriverMap.RightHandedXbox(0);
+    public final DriverMap controller = new DriverMap.LeftHandedXbox(0);
     public final CommandXboxController viceController = new CommandXboxController(1);
 
     // Dashboard inputs
@@ -188,7 +189,7 @@ public class RobotContainer {
 
         controller
                 .startShooterMotorButton()
-                .whileTrue(shooter.runShooterVelocity(3000))
+                .whileTrue(shooter.runShooterVelocity(3500))
                 .onFalse(shooter.runShooterVelocity(0.0));
 
         controller
@@ -204,10 +205,32 @@ public class RobotContainer {
                         () -> controller.translationalAxisY().getAsDouble(),
                         () -> controller.translationalAxisX().getAsDouble()));
 
-        controller.intakeButton().whileTrue(arm.intakeCommand());
+        controller
+                .intakeButton()
+                .whileTrue(runIntakeAndArmDropingCommand())
+                .onFalse(runIntakeIdleAndArmHoldingingCommand());
 
         viceController.leftBumper().onTrue(arm.armDroppingCommand());
         viceController.rightBumper().onTrue(arm.armUprightCommand());
+        viceController.a().onTrue(arm.armHoldingCommand());
+    }
+
+    public Command runIntakeAndArmDropingCommand() {
+        SequentialCommandGroup commandGroup = new SequentialCommandGroup();
+        commandGroup.addCommands(arm.armDroppingCommand());
+        commandGroup.addCommands(Commands.waitSeconds(0.1));
+        commandGroup.addCommands(arm.intakeCommand());
+
+        return commandGroup;
+    }
+
+    public Command runIntakeIdleAndArmHoldingingCommand() {
+        SequentialCommandGroup commandGroup = new SequentialCommandGroup();
+        commandGroup.addCommands(arm.armHoldingCommand());
+        commandGroup.addCommands(Commands.waitSeconds(0.1));
+        commandGroup.addCommands(arm.intakeIdleCommand());
+
+        return commandGroup;
     }
 
     /**
