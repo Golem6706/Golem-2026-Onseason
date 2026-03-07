@@ -31,15 +31,15 @@ public class VisionConstants {
 
     // Robot to camera transforms
     public static Transform3d robotToCamera0 = new Transform3d(
-            Inches.of(-6.99), // Forward 27.5/2 inch
-            Inches.of(7.6), // Leftward 24.25/2 inch
-            Inches.of(22.44).plus(Inches.of(6)), // Height 22.44 inch + Chassis Height 6 inch
-            new Rotation3d(Degrees.zero(), Degrees.of(-20), Degrees.zero())); // Pitch upwards 24 degrees
+            Inches.of(-(27 / 2 - 12.5 / 2.54)), // Forward 25.5 / 2 inch
+            Inches.of(25.5 / 2 - 11.8 / 2.54), // Leftward 27 / 2 inch
+            Inches.of(21.5).plus(Inches.of(6)), // Height 22.44 inch + Chassis Height 6 inch
+            new Rotation3d(Degrees.zero(), Degrees.of(-12), Degrees.zero())); // Pitch upwards 24 degrees
     public static Transform3d robotToCamera1 = new Transform3d(
-            Inches.of(-6.99), // Forward 27.5/2 inch
-            Inches.of(-7.6), // Rightw
-            Inches.of(22.44).plus(Inches.of(6)), // Height 2 inch + Chassis Height 4 inch
-            new Rotation3d(Degrees.zero(), Degrees.of(-20), Degrees.zero())); // Pitch upwards 24 degrees
+            Inches.of(-(27 / 2 - 12.5 / 2.54)), // Forward 27.5/2 inch
+            Inches.of(-(25.5 / 2 - 11.8 / 2.54)), // Rightw
+            Inches.of(21.5).plus(Inches.of(6)), // Height 2 inch + Chassis Height 4 inch
+            new Rotation3d(Degrees.zero(), Degrees.of(-12), Degrees.zero())); // Pitch upwards 24 degrees
 
     // Basic filtering thresholds
     public static double maxAmbiguity = 0.3;

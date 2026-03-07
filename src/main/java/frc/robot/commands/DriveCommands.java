@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.ironmaple.utils.FieldMirroringUtils;
+import org.littletonrobotics.junction.Logger;
 
 public class DriveCommands {
     private static final double DEADBAND = 0.1;
@@ -271,11 +272,37 @@ public class DriveCommands {
     public static Command joystickDriveAtTarget(
             Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier, Supplier<Translation2d> targetSupplier) {
 
-        return joystickDriveAtAngle(drive, xSupplier, ySupplier, () -> {
+        // Create a command that wraps joystickDriveAtAngle with logging
+        Command baseCommand = joystickDriveAtAngle(drive, xSupplier, ySupplier, () -> {
             Translation2d robotPosition = drive.getPose().getTranslation();
             Translation2d targetPosition = targetSupplier.get();
             Translation2d delta = targetPosition.minus(robotPosition);
-            return delta.getAngle();
+            Rotation2d desiredAngle = delta.getAngle();
+            Rotation2d currentAngle = drive.getRotation();
+            double angleError = desiredAngle.minus(currentAngle).getRadians();
+
+            // Wrap angle error to [-π, π]
+            angleError = MathUtil.angleModulus(angleError);
+
+            // Log accuracy data
+            Logger.recordOutput("Drive/TargetAiming/DeltaX", delta.getX());
+            Logger.recordOutput("Drive/TargetAiming/DeltaY", delta.getY());
+            Logger.recordOutput("Drive/TargetAiming/DesiredAngleRad", desiredAngle.getRadians());
+            Logger.recordOutput("Drive/TargetAiming/CurrentAngleRad", currentAngle.getRadians());
+            Logger.recordOutput("Drive/TargetAiming/AngleErrorRad", angleError);
+            Logger.recordOutput("Drive/TargetAiming/Distance", delta.getNorm());
+
+            return desiredAngle;
+        });
+
+        // Wrap the command to clear logging data when it ends
+        return baseCommand.finallyDo(() -> {
+            Logger.recordOutput("Drive/TargetAiming/DeltaX", 0.0);
+            Logger.recordOutput("Drive/TargetAiming/DeltaY", 0.0);
+            Logger.recordOutput("Drive/TargetAiming/DesiredAngleRad", 0.0);
+            Logger.recordOutput("Drive/TargetAiming/CurrentAngleRad", 0.0);
+            Logger.recordOutput("Drive/TargetAiming/AngleErrorRad", 0.0);
+            Logger.recordOutput("Drive/TargetAiming/Distance", 0.0);
         });
     }
 
