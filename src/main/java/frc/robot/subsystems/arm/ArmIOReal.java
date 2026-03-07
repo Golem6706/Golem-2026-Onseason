@@ -9,12 +9,10 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -37,7 +35,7 @@ public class ArmIOReal implements ArmIO {
             .minus(new Rotation2d(HARDWARE_CONSTANTS.ARM_UPPER_HARD_LIMIT()));
 
     // Arm Hardware
-    private final TalonFX armTalonLeft;
+    private final Optional<TalonFX> armFollowerTalonLeft;
     private final TalonFX armTalonRight;
     private final TalonFX intakeTalon;
     //     private final DutyCycleEncoder absoluteEncoder;
@@ -56,12 +54,14 @@ public class ArmIOReal implements ArmIO {
     public ArmIOReal() {
         // Initialize Hardwares
         this.armTalonRight = new TalonFX(HARDWARE_CONSTANTS.ARM_MOTOR_RIGHT_ID());
-        this.armTalonLeft = new TalonFX(HARDWARE_CONSTANTS.ARM_MOTOR_LEFT_ID());
+        this.armFollowerTalonLeft = HARDWARE_CONSTANTS.ARM_MOTOR_LEFT_ID().stream()
+                .mapToObj(TalonFX::new)
+                .findAny();
         this.intakeTalon = new TalonFX(HARDWARE_CONSTANTS.INTAKE_MOTOR_ID());
         // this.absoluteEncoder = new DutyCycleEncoder(HARDWARE_CONSTANTS.ABSOLUTE_ENCODER_CHANNEL());
         this.absoluteEncoder = new CANcoder(HARDWARE_CONSTANTS.ABSOLUTE_ENCODER_ID());
 
-        absoluteEncoder
+        this.absoluteEncoder
                 .getConfigurator()
                 .apply(new MagnetSensorConfigs()
                         .withSensorDirection(
@@ -70,31 +70,38 @@ public class ArmIOReal implements ArmIO {
                                         : SensorDirectionValue.CounterClockwise_Positive));
 
         // Configure Motor
-        armTalonRight
+
+        CurrentLimitsConfigs currentLimitsConfigs = new CurrentLimitsConfigs()
+                .withStatorCurrentLimitEnable(true)
+                .withStatorCurrentLimit(STATOR_CURRENT_LIMIT)
+                .withSupplyCurrentLimitEnable(true)
+                .withSupplyCurrentLimit(SUPPLY_CURRENT_LIMIT)
+                .withSupplyCurrentLimitEnable(true)
+                .withSupplyCurrentLowerTime(OVERHEAT_PROTECTION_TIME)
+                .withSupplyCurrentLowerLimit(OVERHEAT_PROTECTION_CURRENT);
+        this.armTalonRight.getConfigurator().apply(currentLimitsConfigs);
+        this.armTalonRight
                 .getConfigurator()
                 .apply(new MotorOutputConfigs()
                         .withInverted(
                                 HARDWARE_CONSTANTS.ARM_MOTOR_RIGHT_INVERTED()
                                         ? InvertedValue.Clockwise_Positive
                                         : InvertedValue.CounterClockwise_Positive));
-        armTalonRight
-                .getConfigurator()
-                .apply(new CurrentLimitsConfigs()
-                        .withSupplyCurrentLimitEnable(true)
-                        .withSupplyCurrentLimit(ARM_CURRENT_LIMIT));
+        // this.armTalonRight
+        //         .getConfigurator()
+        //         .apply(new CurrentLimitsConfigs()
+        //                 .withSupplyCurrentLimitEnable(true)
+        //                 .withSupplyCurrentLimit(ARM_CURRENT_LIMIT));
 
-        armTalonLeft
-                .getConfigurator()
-                .apply(new MotorOutputConfigs()
-                        .withInverted(
-                                HARDWARE_CONSTANTS.ARM_MOTOR_LEFT_INVERTED()
-                                        ? InvertedValue.Clockwise_Positive
-                                        : InvertedValue.CounterClockwise_Positive));
-        armTalonLeft
-                .getConfigurator()
-                .apply(new CurrentLimitsConfigs()
-                        .withSupplyCurrentLimitEnable(true)
-                        .withSupplyCurrentLimit(ARM_CURRENT_LIMIT));
+        this.armFollowerTalonLeft.ifPresent((talon) -> {
+            talon.getConfigurator().apply(currentLimitsConfigs);
+            talon.getConfigurator()
+                    .apply(new MotorOutputConfigs()
+                            .withInverted(
+                                    HARDWARE_CONSTANTS.ARM_MOTOR_LEFT_INVERTED()
+                                            ? InvertedValue.Clockwise_Positive
+                                            : InvertedValue.CounterClockwise_Positive));
+        });
 
         intakeTalon
                 .getConfigurator()
@@ -109,7 +116,7 @@ public class ArmIOReal implements ArmIO {
                         .withSupplyCurrentLimitEnable(true)
                         .withSupplyCurrentLimit(INTAKE_CURRENT_LIMIT));
 
-        armTalonLeft.setControl(new Follower(armTalonRight.getDeviceID(), MotorAlignmentValue.Opposed));
+        // armFollowerTalonLeft.setControl(new Follower(armTalonRight.getDeviceID(), MotorAlignmentValue.Opposed));
 
         // Obtain Motor Status Signals
         this.absoluteEncoderAngle = this.absoluteEncoder.getAbsolutePosition();
@@ -125,7 +132,7 @@ public class ArmIOReal implements ArmIO {
                 armMotorSupplyCurrent,
                 armMotorSupplyVoltage);
         armTalonRight.optimizeBusUtilization();
-        armTalonLeft.optimizeBusUtilization();
+        armFollowerTalonLeft.ifPresent(TalonFX::optimizeBusUtilization);
         absoluteEncoder.optimizeBusUtilization();
 
         this.intakeMotorSupplyCurrent = intakeTalon.getSupplyCurrent();
@@ -146,6 +153,8 @@ public class ArmIOReal implements ArmIO {
                 relativeEncoderAngle, relativeEncoderVelocity, armMotorSupplyCurrent, armMotorSupplyVoltage);
         // Obtain Motor Readings
         inputs.armMotorConnected = statusCode.isOK();
+        inputs.armFollowerTalonLeftConnected =
+                armFollowerTalonLeft.isEmpty() || armFollowerTalonLeft.get().isAlive();
         inputs.relativeEncoderAngledRad = Units.rotationsToRadians(relativeEncoderAngle.getValueAsDouble());
         inputs.relativeEncoderVelocityRadPerSec = Units.rotationsToRadians(relativeEncoderVelocity.getValueAsDouble());
         inputs.armMotorSupplyCurrentAmps = armMotorSupplyCurrent.getValueAsDouble();
@@ -168,12 +177,14 @@ public class ArmIOReal implements ArmIO {
     public void setArmMotorOutput(Voltage voltage) {
         voltageOut.withOutput(voltage);
         armTalonRight.setControl(voltageOut);
+        armFollowerTalonLeft.ifPresent(talonFX -> talonFX.setControl(voltageOut));
     }
 
     @Override
     public void setArmMotorBrake(boolean brakeModeEnable) {
         NeutralModeValue value = brakeModeEnable ? NeutralModeValue.Brake : NeutralModeValue.Coast;
-        armTalonRight.setNeutralMode(value, 0.1);
+        armTalonRight.setNeutralMode(value);
+        armFollowerTalonLeft.ifPresent(talonFX -> talonFX.setNeutralMode(value));
     }
 
     @Override
@@ -185,6 +196,6 @@ public class ArmIOReal implements ArmIO {
     @Override
     public void setIntakeMotorBrake(boolean brakeModeEnable) {
         NeutralModeValue value = brakeModeEnable ? NeutralModeValue.Brake : NeutralModeValue.Coast;
-        intakeTalon.setNeutralMode(value, 0.1);
+        intakeTalon.setNeutralMode(value);
     }
 }

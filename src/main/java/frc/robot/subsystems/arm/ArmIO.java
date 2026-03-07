@@ -15,25 +15,28 @@ public interface ArmIO {
          */
         public Optional<Rotation2d> absoluteEncoderAngle;
         /** Whether the CAN communications between the rio and the motor are good. */
-        public boolean armMotorConnected;
+        public boolean armMotorConnected = false;
+
+        public boolean armFollowerTalonLeftConnected = true;
         /**
          * The relative encoder angle, measured by the relative encoder (inside the motor). Gearing is NOT considered.
          */
-        public double relativeEncoderAngledRad;
+        public double relativeEncoderAngledRad = 0.0;
         /** The relative encoder velocity, measured by the relative encoder. Gearing is NOT considered. */
-        public double relativeEncoderVelocityRadPerSec;
+        public double relativeEncoderVelocityRadPerSec = 0.0;
         /** The supply current of the motor. */
-        public double armMotorSupplyCurrentAmps;
+        public double armMotorSupplyCurrentAmps = 0.0;
         /** The actual output voltage of the motor. */
-        public double armMotorOutputVolts;
+        public double armMotorOutputVolts = 0.0;
 
-        public boolean intakeMotorConnected;
-        public double intakeMotorSupplyCurrentAmps;
-        public double intakeMotorOutputVolts;
+        public boolean intakeMotorConnected = false;
+        public double intakeMotorSupplyCurrentAmps = 0.0;
+        public double intakeMotorOutputVolts = 0.0;
 
         public ArmInputs() {
             this.absoluteEncoderAngle = Optional.empty();
             this.armMotorConnected = false;
+            this.armFollowerTalonLeftConnected = true;
             this.relativeEncoderAngledRad = 0.0;
             this.relativeEncoderVelocityRadPerSec = 0.0;
             this.armMotorSupplyCurrentAmps = 0.0;
@@ -52,6 +55,7 @@ public interface ArmIO {
             // System.out.println("%%%%%%%%  Arm/Raw Encoder Reading from log " + absoluteEncoderAngle);
 
             table.put("armMotorConnected", armMotorConnected);
+            table.put("armFollowerTalonLeftConnected", armFollowerTalonLeftConnected);
             table.put("relativeEncoerAngledRad", relativeEncoderAngledRad);
             table.put("encoderVelocityRadPerSec", relativeEncoderVelocityRadPerSec);
             table.put("armMotorSupplyCurrentAmps", armMotorSupplyCurrentAmps);
