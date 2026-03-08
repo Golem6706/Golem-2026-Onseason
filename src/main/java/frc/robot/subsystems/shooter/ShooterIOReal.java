@@ -20,34 +20,28 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 
 public class ShooterIOReal implements ShooterIO {
-    // Arrays for shooter motors
     private final TalonFX[] shooterMotors;
     private final StatusSignal<Current>[] shooterMotorCurrents;
     private final StatusSignal<Voltage>[] shooterMotorOutputVoltages;
     private final StatusSignal<AngularVelocity>[] shooterMotorVelocities;
 
-    // Arrays for feeder motors
     private final TalonFX[] feederMotors;
     private final StatusSignal<Current>[] feederMotorCurrents;
     private final StatusSignal<Voltage>[] feederMotorOutputVoltages;
     private final StatusSignal<AngularVelocity>[] feederMotorVelocities;
 
-    // Control requests
     private final VoltageOut voltageOut = new VoltageOut(Volts.zero());
     private final VelocityVoltage shooterVelocityRequest = new VelocityVoltage(0);
 
     public ShooterIOReal() {
-        double freq = 100;
-
-        // Initialize shooter motors
         int shooterCount = SHOOTERHARDWARE_CONSTANTS.shooterMotorIDs().length;
+        int feederCount = SHOOTERHARDWARE_CONSTANTS.feederMotorIDs().length;
+
         shooterMotors = new TalonFX[shooterCount];
         shooterMotorCurrents = new StatusSignal[shooterCount];
         shooterMotorOutputVoltages = new StatusSignal[shooterCount];
         shooterMotorVelocities = new StatusSignal[shooterCount];
 
-        // Initialize feeder motors
-        int feederCount = SHOOTERHARDWARE_CONSTANTS.feederMotorIDs().length;
         feederMotors = new TalonFX[feederCount];
         feederMotorCurrents = new StatusSignal[feederCount];
         feederMotorOutputVoltages = new StatusSignal[feederCount];
@@ -60,41 +54,27 @@ public class ShooterIOReal implements ShooterIO {
 
             shooterMotors[i] = new TalonFX(motorID);
 
-            // Apply current limit
-            CurrentLimitsConfigs currentLimit = new CurrentLimitsConfigs()
-                    .withSupplyCurrentLimitEnable(true)
-                    .withSupplyCurrentLimit(SHOOTER_MOTORS_CURRENT_LIMIT);
-            shooterMotors[i].getConfigurator().apply(currentLimit);
+            TalonFXConfiguration config = new TalonFXConfiguration()
+                    .withCurrentLimits(new CurrentLimitsConfigs()
+                            .withSupplyCurrentLimitEnable(true)
+                            .withSupplyCurrentLimit(SHOOTER_MOTORS_CURRENT_LIMIT))
+                    .withMotorOutput(new MotorOutputConfigs()
+                            .withInverted(
+                                    inverted
+                                            ? InvertedValue.Clockwise_Positive
+                                            : InvertedValue.CounterClockwise_Positive)
+                            .withNeutralMode(NeutralModeValue.Coast))
+                    .withSlot0(SHOOTER_VELOCITY_GAINS);
+            shooterMotors[i].getConfigurator().apply(config);
 
-            // Apply motor output config
-            MotorOutputConfigs outputConfig = new MotorOutputConfigs()
-                    .withInverted(inverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive)
-                    // .withNeutralMode(NeutralModeValue.Brake);
-                    .withNeutralMode(NeutralModeValue.Coast);
-            shooterMotors[i].getConfigurator().apply(outputConfig);
-
-            // Configure PID for velocity control on first motor (leader)
-            if (i == 0) {
-                TalonFXConfiguration config = new TalonFXConfiguration();
-                config.Slot0 = SHOOTER_VELOCITY_GAINS;
-                shooterMotors[i].getConfigurator().apply(config);
-            }
-
-            // Create status signals
             shooterMotorCurrents[i] = shooterMotors[i].getSupplyCurrent();
             shooterMotorOutputVoltages[i] = shooterMotors[i].getMotorVoltage();
             shooterMotorVelocities[i] = shooterMotors[i].getVelocity();
 
-            // Set update frequencies
             BaseStatusSignal.setUpdateFrequencyForAll(
-                    freq, shooterMotorCurrents[i], shooterMotorOutputVoltages[i], shooterMotorVelocities[i]);
+                    100, shooterMotorCurrents[i], shooterMotorOutputVoltages[i], shooterMotorVelocities[i]);
 
             shooterMotors[i].optimizeBusUtilization();
-        }
-
-        // Configure follower motors for shooter (motors 1..n follow motor 0)
-        for (int i = 1; i < shooterCount; i++) {
-            shooterMotors[i].setControl(new Follower(shooterMotors[0].getDeviceID(), MotorAlignmentValue.Aligned));
         }
 
         // Configure feeder motors
@@ -104,49 +84,46 @@ public class ShooterIOReal implements ShooterIO {
 
             feederMotors[i] = new TalonFX(motorID);
 
-            // Apply current limit
-            CurrentLimitsConfigs currentLimit = new CurrentLimitsConfigs()
-                    .withSupplyCurrentLimitEnable(true)
-                    .withSupplyCurrentLimit(FEEDER_MOTORS_CURRENT_LIMIT);
-            feederMotors[i].getConfigurator().apply(currentLimit);
+            TalonFXConfiguration config = new TalonFXConfiguration()
+                    .withCurrentLimits(new CurrentLimitsConfigs()
+                            .withSupplyCurrentLimitEnable(true)
+                            .withSupplyCurrentLimit(FEEDER_MOTORS_CURRENT_LIMIT))
+                    .withMotorOutput(new MotorOutputConfigs()
+                            .withInverted(
+                                    inverted
+                                            ? InvertedValue.Clockwise_Positive
+                                            : InvertedValue.CounterClockwise_Positive)
+                            .withNeutralMode(NeutralModeValue.Coast))
+                    .withSlot0(FEEDER_VELOCITY_GAINS);
+            feederMotors[i].getConfigurator().apply(config);
 
-            // Apply motor output config
-            MotorOutputConfigs outputConfig = new MotorOutputConfigs()
-                    .withInverted(inverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive)
-                    // .withNeutralMode(NeutralModeValue.Brake);
-                    .withNeutralMode(NeutralModeValue.Coast);
-            feederMotors[i].getConfigurator().apply(outputConfig);
-
-            // Create status signals
             feederMotorCurrents[i] = feederMotors[i].getSupplyCurrent();
             feederMotorOutputVoltages[i] = feederMotors[i].getMotorVoltage();
             feederMotorVelocities[i] = feederMotors[i].getVelocity();
 
-            // Set update frequencies
             BaseStatusSignal.setUpdateFrequencyForAll(
-                    freq, feederMotorCurrents[i], feederMotorOutputVoltages[i], feederMotorVelocities[i]);
+                    100, feederMotorCurrents[i], feederMotorOutputVoltages[i], feederMotorVelocities[i]);
 
             feederMotors[i].optimizeBusUtilization();
-        }
-
-        // Configure follower motors for feeder (motors 1..n follow motor 0)
-        for (int i = 1; i < feederCount; i++) {
-            feederMotors[i].setControl(new Follower(feederMotors[0].getDeviceID(), MotorAlignmentValue.Opposed));
         }
     }
 
     @Override
     public void updateInputs(ShooterIOInputs inputs) {
-        // Update shooter inputs
         int shooterCount = shooterMotors.length;
-        inputs.shootersConnected = new boolean[shooterCount];
-        inputs.shooterMotorsVelocityRPM = new double[shooterCount];
+        if (inputs.shootersConnected.length != shooterCount) {
+            inputs.shootersConnected = new boolean[shooterCount];
+            inputs.shooterMotorsVelocityRPM = new double[shooterCount];
+        }
+        if (inputs.feedersConnected.length != feederMotors.length) {
+            inputs.feedersConnected = new boolean[feederMotors.length];
+            inputs.feederMotorsVelocityRPM = new double[feederMotors.length];
+        }
 
         double shooterTotalVolts = 0.0;
         double shooterTotalCurrent = 0.0;
 
         for (int i = 0; i < shooterCount; i++) {
-            // Refresh signals
             boolean connected = BaseStatusSignal.refreshAll(
                             shooterMotorCurrents[i], shooterMotorOutputVoltages[i], shooterMotorVelocities[i])
                     .isOK();
@@ -156,24 +133,18 @@ public class ShooterIOReal implements ShooterIO {
             if (connected) {
                 shooterTotalVolts += shooterMotorOutputVoltages[i].getValueAsDouble();
                 shooterTotalCurrent += shooterMotorCurrents[i].getValueAsDouble();
-                // Convert from rotations per second to RPM
                 inputs.shooterMotorsVelocityRPM[i] = shooterMotorVelocities[i].getValueAsDouble() * 60.0;
             }
         }
 
-        inputs.shooterMotorsAverageVolts = shooterCount > 0 ? shooterTotalVolts / shooterCount : 0.0;
+        inputs.shooterMotorsAverageVolts = shooterTotalVolts / shooterCount;
         inputs.shooterMotorsTotalCurrentAmps = shooterTotalCurrent;
 
-        // Update feeder inputs
         int feederCount = feederMotors.length;
-        inputs.feedersConnected = new boolean[feederCount];
-        inputs.feederMotorsVelocityRPM = new double[feederCount];
-
         double feederTotalVolts = 0.0;
         double feederTotalCurrent = 0.0;
 
         for (int i = 0; i < feederCount; i++) {
-            // Refresh signals
             boolean connected = BaseStatusSignal.refreshAll(
                             feederMotorCurrents[i], feederMotorOutputVoltages[i], feederMotorVelocities[i])
                     .isOK();
@@ -183,42 +154,36 @@ public class ShooterIOReal implements ShooterIO {
             if (connected) {
                 feederTotalVolts += feederMotorOutputVoltages[i].getValueAsDouble();
                 feederTotalCurrent += feederMotorCurrents[i].getValueAsDouble();
-                // Convert from rotations per second to RPM
                 inputs.feederMotorsVelocityRPM[i] = feederMotorVelocities[i].getValueAsDouble() * 60.0;
             }
         }
 
-        inputs.feederMotorsAverageVolts = feederCount > 0 ? feederTotalVolts / feederCount : 0.0;
+        inputs.feederMotorsAverageVolts = feederTotalVolts / feederCount;
         inputs.feederMotorsTotalCurrentAmps = feederTotalCurrent;
     }
 
     @Override
     public void setShooterMotorsVoltage(double volts) {
-        // Apply voltage to leader motor only (followers will follow)
-        if (shooterMotors.length > 0) {
-            voltageOut.withOutput(volts);
-            shooterMotors[0].setControl(voltageOut);
+        shooterMotors[0].setControl(voltageOut.withOutput(volts));
+        for (int i = 1; i < shooterMotors.length; i++) {
+            shooterMotors[i].setControl(new Follower(shooterMotors[0].getDeviceID(), MotorAlignmentValue.Aligned));
         }
     }
 
     @Override
     public void setFeederMotorsVoltage(double volts) {
-        // Apply voltage to leader motor only (followers will follow)
-        if (feederMotors.length > 0) {
-            voltageOut.withOutput(volts);
-            feederMotors[0].setControl(voltageOut);
+        feederMotors[0].setControl(voltageOut.withOutput(volts));
+        for (int i = 1; i < feederMotors.length; i++) {
+            feederMotors[i].setControl(new Follower(feederMotors[0].getDeviceID(), MotorAlignmentValue.Aligned));
         }
     }
 
     @Override
     public void setShooterVelocity(double rpm) {
-        // Apply velocity control to leader motor only (followers will follow)
-        // The trapezoidal profile is implemented in the Shooter subsystem
-        if (shooterMotors.length > 0) {
-            // Convert RPM to rotations per second for Phoenix6
-            double rps = rpm / 60.0;
-            shooterVelocityRequest.withVelocity(rps);
-            shooterMotors[0].setControl(shooterVelocityRequest);
+        double rps = rpm / 60.0;
+        shooterMotors[0].setControl(shooterVelocityRequest.withVelocity(rps));
+        for (int i = 1; i < shooterMotors.length; i++) {
+            shooterMotors[i].setControl(new Follower(shooterMotors[0].getDeviceID(), MotorAlignmentValue.Aligned));
         }
     }
 }

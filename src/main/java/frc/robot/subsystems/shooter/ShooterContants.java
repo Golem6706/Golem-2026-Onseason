@@ -6,7 +6,6 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import edu.wpi.first.units.measure.Current;
 
 public final class ShooterContants {
-    // Array-based hardware configuration
     public record ShooterHardwareConstants(
             int[] shooterMotorIDs,
             boolean[] shooterMotorInverted,
@@ -14,7 +13,6 @@ public final class ShooterContants {
             boolean[] feederMotorInverted) {
 
         public ShooterHardwareConstants {
-            // Validate array lengths match
             if (shooterMotorIDs.length != shooterMotorInverted.length) {
                 throw new IllegalArgumentException("shooterMotorIDs and shooterMotorInverted must have same length");
             }
@@ -24,49 +22,27 @@ public final class ShooterContants {
         }
     }
 
-    // Default configuration with 3 shooter motors and 2 feeder motors
-    // For Team 7601
-    // public static final ShooterHardwareConstants SHOOTERHARDWARE_CONSTANTS = new ShooterHardwareConstants(
-    //         new int[] {14, 15, 16}, new boolean[] {false, false, false}, new int[] {18, 19}, new boolean[] {false,
-    // false
-    //         });
-
-    // For Team 5522
-    // public static final ShooterHardwareConstants SHOOTERHARDWARE_CONSTANTS = new ShooterHardwareConstants(
-    //         new int[] {29, 30, 31}, new boolean[] {false, false, false}, new int[] {32, 33}, new boolean[] {false,
-    // false
-    //         });
-    // For Team 6706
     public static final ShooterHardwareConstants SHOOTERHARDWARE_CONSTANTS = new ShooterHardwareConstants(
             new int[] {15, 16, 17, 18}, new boolean[] {false, false, false, false}, new int[] {14, 13}, new boolean[] {
                 false, false
             });
-    // Default voltage settings matching previous configuration
+
     public static final VoltageSettings VOLTAGE_SETTINGS =
             new VoltageSettings(new double[] {10.0, 10.0, 10.0, 10.0}, new double[] {6.0, 6.0});
 
-    // PID constants for velocity control (RPM)
-    public static final Slot0Configs SHOOTER_VELOCITY_GAINS = new Slot0Configs()
-            .withKP(0.1) // Proportional gain
-            .withKI(0.0) // Integral gain
-            .withKD(0.0) // Derivative gain
-            .withKS(0.0) // Static feedforward
-            .withKV(0.12); // Velocity feedforward (volts per RPM)
+    public static final Slot0Configs SHOOTER_VELOCITY_GAINS =
+            new Slot0Configs().withKP(0.1).withKI(0.0).withKD(0.0).withKS(0.0).withKV(0.12);
 
     public static final Slot0Configs FEEDER_VELOCITY_GAINS =
             new Slot0Configs().withKP(0.1).withKI(0.0).withKD(0.0).withKS(0.0).withKV(0.12);
 
-    // Maximum RPM for shooter and feeder
     public static final double MAX_SHOOTER_RPM = 6000.0;
     public static final double MAX_FEEDER_RPM = 3000.0;
 
-    // Acceleration limit for shooter trapezoidal profile: 12000 rpm/s = 200 rps/s
-    public static final double SHOOTER_ACCELERATION_RPS = 200.0;
+    public static final double SHOOTER_ACCELERATION_RPM_PER_SEC = 12000.0;
 
-    // Velocity tolerance for "at reference" check
     public static final double SHOOTER_VELOCITY_TOLERANCE_RPM = 100.0;
 
-    // Voltage settings for backward compatibility
     public record VoltageSettings(double[] shooterMotorVolts, double[] feederMotorVolts) {
 
         public VoltageSettings {

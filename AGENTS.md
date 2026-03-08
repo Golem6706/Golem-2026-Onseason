@@ -177,6 +177,26 @@ The Phoenix6 library controls CTRE hardware via **CAN bus** (Controller Area Net
 - **Markdown**: 2-space indentation, trim trailing whitespace
 - **Automatic formatting** runs before compilation (`project.compileJava.dependsOn(spotlessApply)`)
 
+### **Function Signatures (Javadoc)**
+- **All public methods must have Javadoc function signatures** that describe what the method does
+- **Interface methods**: Write function signatures ONLY in the interface, not in implementations
+- **Format**: Use standard Javadoc format with `@return` and `@param` as needed
+- **Example**:
+```java
+/**
+ * Checks if all shooter and feeder motors are connected and functioning.
+ *
+ * @return true if all motors are connected, false otherwise
+ */
+public boolean hardwareOK() { ... }
+```
+
+### **Comments**
+- **Remove all unnecessary comments** - code should be self-explanatory
+- **Only keep comments when something is actually tricky** or needs special explanation
+- **Avoid redundant comments** like "// Update inputs" when the method is clearly named `updateInputs()`
+- **Do NOT comment variable** - let the naming speak for itself
+
 ### **Imports**
 ```java
 // Group imports in this order:

@@ -2,6 +2,7 @@ package frc.robot.subsystems.shooter;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -14,49 +15,58 @@ import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
-    // Hardware interface
     private final ShooterIO io;
     private final ShooterIOInputsAutoLogged inputs;
 
-    // SysId routine for shooter characterization
     private final SysIdRoutine sysId;
 
-    // Shooter velocity tracking
     private double shooterTargetRPM = 0.0;
     private double currentShooterVelocityRPM = 0.0;
-    private double profiledTargetRPM = 0.0; // Trapezoidal profile target
 
-    // Trapezoidal profile state
-    private double lastProfileTime = 0.0;
+    private TrapezoidProfile velocityProfile;
+    private TrapezoidProfile.State previousProfileState = new TrapezoidProfile.State(0.0, 0.0);
 
-    // Dynamic alerts based on motor count
-    private Alert[] shooterMotorAlerts;
-    private Alert[] feederMotorAlerts;
+    private final Alert[] shooterMotorAlerts;
+    private final Alert[] feederMotorAlerts;
 
     public Shooter(ShooterIO io) {
         this.io = io;
         inputs = new ShooterIOInputsAutoLogged();
 
-        // Initialize alerts arrays (will be populated in periodic based on actual motor count)
-        shooterMotorAlerts = new Alert[0];
-        feederMotorAlerts = new Alert[0];
+        int shooterCount = ShooterContants.SHOOTERHARDWARE_CONSTANTS.shooterMotorIDs().length;
+        int feederCount = ShooterContants.SHOOTERHARDWARE_CONSTANTS.feederMotorIDs().length;
 
-        // Configure SysId routine for shooter
+        shooterMotorAlerts = new Alert[shooterCount];
+        for (int i = 0; i < shooterCount; i++) {
+            shooterMotorAlerts[i] = AlertsManager.create("ShooterMotor" + (i + 1) + " disconnected!", AlertType.kError);
+        }
+
+        feederMotorAlerts = new Alert[feederCount];
+        for (int i = 0; i < feederCount; i++) {
+            feederMotorAlerts[i] = AlertsManager.create("FeederMotor" + (i + 1) + " disconnected!", AlertType.kError);
+        }
+
+        velocityProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(
+                ShooterContants.MAX_SHOOTER_RPM, ShooterContants.SHOOTER_ACCELERATION_RPM_PER_SEC));
+
         sysId = new SysIdRoutine(
                 new SysIdRoutine.Config(
                         null, null, null, (state) -> Logger.recordOutput("Shooter/SysIdState", state.toString())),
                 new SysIdRoutine.Mechanism((voltage) -> runShooterCharacterization(voltage.in(Volts)), null, this));
     }
 
+    /**
+     * Checks if all shooter and feeder motors are connected and functioning.
+     *
+     * @return true if all motors are connected, false otherwise
+     */
     public boolean hardwareOK() {
-        // Check all shooter motors
         if (inputs.shootersConnected != null) {
             for (boolean connected : inputs.shootersConnected) {
                 if (!connected) return false;
             }
         }
 
-        // Check all feeder motors
         if (inputs.feedersConnected != null) {
             for (boolean connected : inputs.feedersConnected) {
                 if (!connected) return false;
@@ -68,71 +78,33 @@ public class Shooter extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // Update inputs from IO and AdvantageKit
         io.updateInputs(inputs);
         Logger.processInputs("Shooter", inputs);
 
-        // Initialize or update alerts based on current motor count
         updateAlerts();
 
         if (DriverStation.isDisabled()) executeIdle();
 
-        // Update trapezoidal velocity profile
         updateTrapezoidalProfile();
 
-        // Update alerts
-        if (shooterMotorAlerts.length > 0 && inputs.shootersConnected != null) {
-            for (int i = 0; i < Math.min(shooterMotorAlerts.length, inputs.shootersConnected.length); i++) {
-                if (shooterMotorAlerts[i] != null) {
-                    shooterMotorAlerts[i].set(!inputs.shootersConnected[i]);
-                }
-            }
-        }
-
-        if (feederMotorAlerts.length > 0 && inputs.feedersConnected != null) {
-            for (int i = 0; i < Math.min(feederMotorAlerts.length, inputs.feedersConnected.length); i++) {
-                if (feederMotorAlerts[i] != null) {
-                    feederMotorAlerts[i].set(!inputs.feedersConnected[i]);
-                }
-            }
-        }
-
-        // Log motor connections
-        // Note: Already logged via inputs in processInputs
-
-        // Log aggregated data
-        // Note: Already logged via inputs in processInputs
-
-        // Log velocity data and at-reference status
-        // Note: AverageVelocityRPM already logged via inputs in processInputs
         if (inputs.shooterMotorsVelocityRPM != null && inputs.shooterMotorsVelocityRPM.length > 0) {
-            double averageVelocity = calculateAverageVelocity(inputs.shooterMotorsVelocityRPM);
-            currentShooterVelocityRPM = averageVelocity;
+            currentShooterVelocityRPM = calculateAverageVelocity(inputs.shooterMotorsVelocityRPM);
         }
 
-        // Log at reference status
         Logger.recordOutput("Shooter/AtVelocityReference", isShooterAtVelocityReference());
         Logger.recordOutput("Shooter/TargetVelocityRPM", shooterTargetRPM);
-
-        // Note: Feeder velocity already logged via inputs
     }
 
     private void updateAlerts() {
-        // Create alerts for shooter motors if needed
-        if (inputs.shootersConnected != null && shooterMotorAlerts.length != inputs.shootersConnected.length) {
-            shooterMotorAlerts = new Alert[inputs.shootersConnected.length];
-            for (int i = 0; i < shooterMotorAlerts.length; i++) {
-                shooterMotorAlerts[i] =
-                        AlertsManager.create("ShooterMotor" + (i + 1) + " hardware detected!", AlertType.kError);
+        if (inputs.shootersConnected != null) {
+            for (int i = 0; i < Math.min(shooterMotorAlerts.length, inputs.shootersConnected.length); i++) {
+                shooterMotorAlerts[i].set(!inputs.shootersConnected[i]);
             }
         }
 
-        // Create alerts for feeder motors if needed
-        if (inputs.feedersConnected != null && feederMotorAlerts.length != inputs.feedersConnected.length) {
-            feederMotorAlerts = new Alert[inputs.feedersConnected.length];
-            for (int i = 0; i < feederMotorAlerts.length; i++) {
-                feederMotorAlerts[i] =
-                        AlertsManager.create("FeederMotor" + (i + 1) + " hardware detected!", AlertType.kError);
+        if (inputs.feedersConnected != null) {
+            for (int i = 0; i < Math.min(feederMotorAlerts.length, inputs.feedersConnected.length); i++) {
+                feederMotorAlerts[i].set(!inputs.feedersConnected[i]);
             }
         }
     }
@@ -141,12 +113,10 @@ public class Shooter extends SubsystemBase {
         if (velocities == null || velocities.length == 0) return 0.0;
 
         double sum = 0.0;
-        int count = 0;
         for (double velocity : velocities) {
             sum += velocity;
-            count++;
         }
-        return count > 0 ? sum / count : 0.0;
+        return sum / velocities.length;
     }
 
     private void setShooterMotorVolts(double shooterMotorVolts) {
@@ -162,48 +132,43 @@ public class Shooter extends SubsystemBase {
     private void setShooterVelocity(double rpm) {
         if (!hardwareOK()) rpm = 0;
         shooterTargetRPM = rpm;
-        // The trapezoidal profile is applied in periodic()
-        io.setShooterVelocity(0); // Will be updated by profile in periodic
+        io.setShooterVelocity(0);
     }
 
-    /** Updates the trapezoidal velocity profile. Call this in periodic() to apply the profile. */
     private void updateTrapezoidalProfile() {
-        double dt = 0.02; // 20ms period (50Hz)
+        double dt = 0.02;
 
-        // Calculate the difference between target and current
-        double error = shooterTargetRPM - profiledTargetRPM;
+        TrapezoidProfile.State goal = new TrapezoidProfile.State(shooterTargetRPM, 0.0);
+        TrapezoidProfile.State nextState = velocityProfile.calculate(dt, previousProfileState, goal);
 
-        // Calculate max change based on acceleration limit (12000 rpm/s)
-        double maxChange = ShooterContants.SHOOTER_ACCELERATION_RPS * 60.0 * dt; // Convert to RPM change per cycle
+        previousProfileState = nextState;
 
-        // Apply trapezoidal profile - change velocity gradually
-        if (Math.abs(error) <= maxChange) {
-            // Close enough, go directly to target
-            profiledTargetRPM = shooterTargetRPM;
-        } else {
-            // Ramp toward target at acceleration limit
-            if (error > 0) {
-                profiledTargetRPM += maxChange;
-            } else {
-                profiledTargetRPM -= maxChange;
-            }
-        }
-
-        // Apply the profiled velocity to the motor
-        io.setShooterVelocity(profiledTargetRPM);
+        io.setShooterVelocity(nextState.position);
     }
 
-    /** Returns the current shooter velocity in RPM. */
+    /**
+     * Gets the current shooter velocity in RPM.
+     *
+     * @return the current shooter velocity in RPM
+     */
     public double getShooterVelocityRPM() {
         return currentShooterVelocityRPM;
     }
 
-    /** Returns the shooter target velocity in RPM. */
+    /**
+     * Gets the target shooter velocity in RPM.
+     *
+     * @return the target shooter velocity in RPM
+     */
     public double getShooterTargetRPM() {
         return shooterTargetRPM;
     }
 
-    /** Checks if the shooter is at the target velocity within the tolerance. */
+    /**
+     * Checks if the shooter is at the target velocity within the tolerance.
+     *
+     * @return true if the shooter is at the target velocity, false otherwise
+     */
     public boolean isShooterAtVelocityReference() {
         return Math.abs(currentShooterVelocityRPM - shooterTargetRPM) <= ShooterContants.SHOOTER_VELOCITY_TOLERANCE_RPM;
     }
@@ -213,22 +178,52 @@ public class Shooter extends SubsystemBase {
         setFeederMotorVolts(0.0);
     }
 
+    /**
+     * Creates a command that runs the shooter motors at a specified voltage.
+     *
+     * @param shooterMotorVolts the voltage to apply to the shooter motors
+     * @return the command
+     */
     public Command runShooter(double shooterMotorVolts) {
         return run(() -> setShooterMotorVolts(shooterMotorVolts));
     }
 
+    /**
+     * Creates a command that runs the feeder motors at a specified voltage.
+     *
+     * @param feederMotorVolts the voltage to apply to the feeder motors
+     * @return the command
+     */
     public Command runFeeder(double feederMotorVolts) {
         return run(() -> setFeederMotorVolts(feederMotorVolts));
     }
 
+    /**
+     * Creates a command that runs the shooter at a specified velocity using closed-loop control.
+     *
+     * @param rpm the target velocity in RPM
+     * @return the command
+     */
     public Command runShooterVelocity(double rpm) {
         return run(() -> setShooterVelocity(rpm));
     }
 
+    /**
+     * Creates a command that runs both shooter and feeder at specified velocities.
+     *
+     * @param shooterRPM the target shooter velocity in RPM
+     * @param feederRPM the target feeder velocity in RPM (open-loop voltage is used)
+     * @return the command
+     */
     public Command runSetPoint(double shooterRPM, double feederRPM) {
         return runShooterVelocity(shooterRPM).alongWith(runFeeder(feederRPM));
     }
 
+    /**
+     * Creates a command that stops all shooter and feeder motors.
+     *
+     * @return the command
+     */
     public Command runIdle() {
         return runShooter(0).alongWith(runFeeder(0));
     }
@@ -243,12 +238,22 @@ public class Shooter extends SubsystemBase {
         io.setShooterMotorsVoltage(volts);
     }
 
-    /** Returns a command to run a quasistatic test in the specified direction. */
+    /**
+     * Creates a command that runs a quasistatic SysId test in the specified direction.
+     *
+     * @param direction the direction for the quasistatic test
+     * @return the command
+     */
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
         return run(() -> runShooterCharacterization(0.0)).withTimeout(1.0).andThen(sysId.quasistatic(direction));
     }
 
-    /** Returns a command to run a dynamic test in the specified direction. */
+    /**
+     * Creates a command that runs a dynamic SysId test in the specified direction.
+     *
+     * @param direction the direction for the dynamic test
+     * @return the command
+     */
     public Command sysIdDynamic(SysIdRoutine.Direction direction) {
         return run(() -> runShooterCharacterization(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
     }
@@ -266,7 +271,6 @@ public class Shooter extends SubsystemBase {
             double rpm = rpmSupplier.getAsDouble();
             setShooterVelocity(rpm);
 
-            // Run feeder if triggered AND shooter is at reference velocity
             if (triggerSupplier.getAsBoolean() && isShooterAtVelocityReference()) {
                 setFeederMotorVolts(ShooterContants.VOLTAGE_SETTINGS.feederMotorVolts()[0]);
             } else {
