@@ -35,13 +35,6 @@ public class ShooterIOReal implements ShooterIO {
     // Control requests
     private final VoltageOut voltageOut = new VoltageOut(Volts.zero());
     private final VelocityVoltage shooterVelocityRequest = new VelocityVoltage(0);
-    private final VelocityVoltage feederVelocityRequest = new VelocityVoltage(0);
-
-    // Track current control mode
-    private boolean shooterVelocityControl = false;
-    private boolean feederVelocityControl = false;
-    private double shooterTargetRPM = 0.0;
-    private double feederTargetRPM = 0.0;
 
     public ShooterIOReal() {
         double freq = 100;
@@ -124,13 +117,6 @@ public class ShooterIOReal implements ShooterIO {
                     .withNeutralMode(NeutralModeValue.Coast);
             feederMotors[i].getConfigurator().apply(outputConfig);
 
-            // Configure PID for velocity control on first motor (leader)
-            if (i == 0) {
-                TalonFXConfiguration config = new TalonFXConfiguration();
-                config.Slot0 = FEEDER_VELOCITY_GAINS;
-                feederMotors[i].getConfigurator().apply(config);
-            }
-
             // Create status signals
             feederMotorCurrents[i] = feederMotors[i].getSupplyCurrent();
             feederMotorOutputVoltages[i] = feederMotors[i].getMotorVoltage();
@@ -208,8 +194,6 @@ public class ShooterIOReal implements ShooterIO {
 
     @Override
     public void setShooterMotorsVoltage(double volts) {
-        shooterVelocityControl = false;
-
         // Apply voltage to leader motor only (followers will follow)
         if (shooterMotors.length > 0) {
             voltageOut.withOutput(volts);
@@ -219,8 +203,6 @@ public class ShooterIOReal implements ShooterIO {
 
     @Override
     public void setFeederMotorsVoltage(double volts) {
-        feederVelocityControl = false;
-
         // Apply voltage to leader motor only (followers will follow)
         if (feederMotors.length > 0) {
             voltageOut.withOutput(volts);
@@ -230,29 +212,13 @@ public class ShooterIOReal implements ShooterIO {
 
     @Override
     public void setShooterVelocity(double rpm) {
-        shooterVelocityControl = true;
-        shooterTargetRPM = rpm;
-
         // Apply velocity control to leader motor only (followers will follow)
+        // The trapezoidal profile is implemented in the Shooter subsystem
         if (shooterMotors.length > 0) {
             // Convert RPM to rotations per second for Phoenix6
             double rps = rpm / 60.0;
             shooterVelocityRequest.withVelocity(rps);
             shooterMotors[0].setControl(shooterVelocityRequest);
-        }
-    }
-
-    @Override
-    public void setFeederVelocity(double rpm) {
-        feederVelocityControl = true;
-        feederTargetRPM = rpm;
-
-        // Apply velocity control to leader motor only (followers will follow)
-        if (feederMotors.length > 0) {
-            // Convert RPM to rotations per second for Phoenix6
-            double rps = rpm / 60.0;
-            feederVelocityRequest.withVelocity(rps);
-            feederMotors[0].setControl(feederVelocityRequest);
         }
     }
 }

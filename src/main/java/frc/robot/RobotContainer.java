@@ -131,6 +131,14 @@ public class RobotContainer {
         autoChooser.addOption("Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
         autoChooser.addOption("Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+        // Shooter SysId options
+        autoChooser.addOption(
+                "Shooter SysId (Quasistatic Forward)", shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        autoChooser.addOption(
+                "Shooter SysId (Quasistatic Reverse)", shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        autoChooser.addOption("Shooter SysId (Dynamic Forward)", shooter.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        autoChooser.addOption("Shooter SysId (Dynamic Reverse)", shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
         // Configure the button bindings
         configureButtonBindings();
     }
@@ -189,13 +197,10 @@ public class RobotContainer {
 
         controller
                 .startShooterMotorButton()
-                .whileTrue(shooter.runShooterVelocity(3500))
-                .onFalse(shooter.runShooterVelocity(0.0));
+                .whileTrue(shooter.shootCommand(3500.0, () -> false))
+                .onFalse(shooter.runShooter(0));
 
-        controller
-                .startFeederToShootButton()
-                .whileTrue(shooter.runFeederVelocity(2000))
-                .onFalse(shooter.runFeederVelocity(0.0));
+        controller.startFeederToShootButton().whileTrue(shooter.runFeeder(6.0)).onFalse(shooter.runFeeder(0.0));
         // .whileFalse(shooter.runFeederVelocity(0.0).alongWith(arm.intakeIdleCommand()));
         // Auto-aiming binding
         controller

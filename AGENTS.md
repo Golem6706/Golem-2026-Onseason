@@ -139,19 +139,16 @@ The Phoenix6 library controls CTRE hardware via **CAN bus** (Controller Area Net
 ### **Essential Commands**
 ```bash
 # Build the project
-./gradlew build
+./gradlew build -Dorg.gradle.java.home="/home/catr1x/wpilib/2026/jdk"
 
 # Deploy to RoboRIO (real robot)
-./gradlew deploy
+./gradlew deploy -Dorg.gradle.java.home="/home/catr1x/wpilib/2026/jdk"
 
 # Run Java simulation (set Constants.currentRobotMode to SIM first)
-./gradlew simulateJava
+./gradlew simulateJava -Dorg.gradle.java.home="/home/catr1x/wpilib/2026/jdk"
 
 # Run tests (JUnit 5)
-./gradlew test
-
-# Run specific test class
-./gradlew test --tests "frc.robot.subsystems.drive.DriveTest"
+./gradlew test -Dorg.gradle.java.home="/home/catr1x/wpilib/2026/jdk"
 
 # Format code (runs automatically before compile)
 ./gradlew spotlessApply
@@ -163,7 +160,7 @@ The Phoenix6 library controls CTRE hardware via **CAN bus** (Controller Area Net
 ./gradlew assemble
 
 # Run replay watch (AdvantageKit)
-./gradlew replayWatch
+./gradlew replayWatch -Dorg.gradle.java.home="/home/catr1x/wpilib/2026/jdk"
 ```
 
 ### **Simulation Setup**

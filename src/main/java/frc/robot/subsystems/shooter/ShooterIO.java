@@ -20,13 +20,11 @@ public interface ShooterIO {
 
     void updateInputs(ShooterIOInputs inputs);
 
-    // Open-loop voltage control (backward compatibility)
+    // Open-loop voltage control
     default void setShooterMotorsVoltage(double volts) {}
 
     default void setFeederMotorsVoltage(double volts) {}
 
-    // Closed-loop velocity control (new feature)
+    // Closed-loop velocity control for shooter only
     default void setShooterVelocity(double rpm) {}
-
-    default void setFeederVelocity(double rpm) {}
 }

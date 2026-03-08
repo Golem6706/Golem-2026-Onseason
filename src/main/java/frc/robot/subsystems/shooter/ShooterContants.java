@@ -60,6 +60,12 @@ public final class ShooterContants {
     public static final double MAX_SHOOTER_RPM = 6000.0;
     public static final double MAX_FEEDER_RPM = 3000.0;
 
+    // Acceleration limit for shooter trapezoidal profile: 12000 rpm/s = 200 rps/s
+    public static final double SHOOTER_ACCELERATION_RPS = 200.0;
+
+    // Velocity tolerance for "at reference" check
+    public static final double SHOOTER_VELOCITY_TOLERANCE_RPM = 100.0;
+
     // Voltage settings for backward compatibility
     public record VoltageSettings(double[] shooterMotorVolts, double[] feederMotorVolts) {
 

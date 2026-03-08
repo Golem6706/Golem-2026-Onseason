@@ -5,213 +5,72 @@ import static frc.robot.subsystems.shooter.ShooterContants.*;
 import edu.wpi.first.math.MathUtil;
 
 public class ShooterIOSim implements ShooterIO {
-    // Simple simulation state for shooter motors
-    private final double[] shooterVelocitiesRPM;
-    private final double[] shooterAppliedVolts;
-    private final double[] shooterTargetRPM;
+    // Simple simulation state for shooter motor
+    private double shooterVelocityRPM = 0.0;
+    private double shooterAppliedVolts = 0.0;
 
-    // Simple simulation state for feeder motors
-    private final double[] feederVelocitiesRPM;
-    private final double[] feederAppliedVolts;
-    private final double[] feederTargetRPM;
-
-    // Track current control mode
-    private boolean shooterVelocityControl = false;
-    private boolean feederVelocityControl = false;
-
-    // PID controllers for velocity control
-    private static final double SHOOTER_KP = 0.1;
-    private static final double SHOOTER_KI = 0.0;
-    private static final double SHOOTER_KD = 0.0;
-
-    private static final double FEEDER_KP = 0.1;
-    private static final double FEEDER_KI = 0.0;
-    private static final double FEEDER_KD = 0.0;
+    // Simple simulation state for feeder motor
+    private double feederVelocityRPM = 0.0;
+    private double feederAppliedVolts = 0.0;
 
     // Simulation parameters
-    private static final double MOTOR_RESISTANCE = 0.05; // Ohms
     private static final double MOTOR_KV = 0.012; // Volts per RPM
-    private static final double MOTOR_INERTIA = 0.001; // kg·m²
     private static final double SIMULATION_DT = 0.02; // 20ms update period
 
-    // PID accumulators
-    private double shooterIntegral = 0.0;
-    private double feederIntegral = 0.0;
-    private double shooterPrevError = 0.0;
-    private double feederPrevError = 0.0;
-
     public ShooterIOSim() {
-        // Initialize shooter simulation
-        int shooterCount = SHOOTERHARDWARE_CONSTANTS.shooterMotorIDs().length;
-        shooterVelocitiesRPM = new double[shooterCount];
-        shooterAppliedVolts = new double[shooterCount];
-        shooterTargetRPM = new double[shooterCount];
-
-        for (int i = 0; i < shooterCount; i++) {
-            shooterVelocitiesRPM[i] = 0.0;
-            shooterAppliedVolts[i] = 0.0;
-            shooterTargetRPM[i] = 0.0;
-        }
-
-        // Initialize feeder simulation
-        int feederCount = SHOOTERHARDWARE_CONSTANTS.feederMotorIDs().length;
-        feederVelocitiesRPM = new double[feederCount];
-        feederAppliedVolts = new double[feederCount];
-        feederTargetRPM = new double[feederCount];
-
-        for (int i = 0; i < feederCount; i++) {
-            feederVelocitiesRPM[i] = 0.0;
-            feederAppliedVolts[i] = 0.0;
-            feederTargetRPM[i] = 0.0;
-        }
+        // No additional initialization needed
     }
 
     @Override
     public void updateInputs(ShooterIOInputs inputs) {
-        // Update shooter inputs
-        int shooterCount = shooterVelocitiesRPM.length;
-        inputs.shootersConnected = new boolean[shooterCount];
-        inputs.shooterMotorsVelocityRPM = new double[shooterCount];
+        // Update shooter inputs - use single values since simulation is idealized
+        inputs.shootersConnected = new boolean[] {true};
+        inputs.shooterMotorsVelocityRPM = new double[] {shooterVelocityRPM};
 
-        double shooterTotalVolts = 0.0;
-        double shooterTotalCurrent = 0.0;
+        // Simple motor model: velocity = voltage / KV
+        double backEMF = shooterVelocityRPM * MOTOR_KV;
+        double effectiveVoltage = shooterAppliedVolts - backEMF;
+        double acceleration = effectiveVoltage / MOTOR_KV;
 
-        for (int i = 0; i < shooterCount; i++) {
-            // All motors are "connected" in simulation
-            inputs.shootersConnected[i] = true;
+        // Update velocity
+        shooterVelocityRPM += acceleration * SIMULATION_DT;
+        shooterVelocityRPM = Math.max(0, shooterVelocityRPM);
 
-            // Apply velocity control if enabled
-            if (shooterVelocityControl && i == 0) { // Only control leader in simulation
-                double error = shooterTargetRPM[i] - shooterVelocitiesRPM[i];
-
-                // PID calculation
-                shooterIntegral += error * SIMULATION_DT;
-                double derivative = (error - shooterPrevError) / SIMULATION_DT;
-                shooterPrevError = error;
-
-                double controlOutput = SHOOTER_KP * error + SHOOTER_KI * shooterIntegral + SHOOTER_KD * derivative;
-                controlOutput = MathUtil.clamp(controlOutput, -12.0, 12.0);
-                shooterAppliedVolts[i] = controlOutput;
-            }
-
-            // Simple motor model: velocity = (voltage - backEMF) / resistance * KV
-            double backEMF = shooterVelocitiesRPM[i] * MOTOR_KV;
-            double effectiveVoltage = shooterAppliedVolts[i] - backEMF;
-            double acceleration = (effectiveVoltage / MOTOR_RESISTANCE) * MOTOR_KV / MOTOR_INERTIA;
-
-            // Update velocity
-            shooterVelocitiesRPM[i] += acceleration * SIMULATION_DT;
-            shooterVelocitiesRPM[i] = Math.max(0, shooterVelocitiesRPM[i]); // Can't go negative
-
-            // Set output
-            inputs.shooterMotorsVelocityRPM[i] = shooterVelocitiesRPM[i];
-
-            // Calculate current: I = (V - backEMF) / R
-            double current = Math.abs(effectiveVoltage) / MOTOR_RESISTANCE;
-            shooterTotalCurrent += current;
-
-            // Track applied voltage
-            shooterTotalVolts += shooterAppliedVolts[i];
-        }
-
-        inputs.shooterMotorsAverageVolts = shooterCount > 0 ? shooterTotalVolts / shooterCount : 0.0;
-        inputs.shooterMotorsTotalCurrentAmps = shooterTotalCurrent;
+        inputs.shooterMotorsAverageVolts = shooterAppliedVolts;
+        inputs.shooterMotorsTotalCurrentAmps = Math.abs(effectiveVoltage) / 0.05; // 0.05 Ohm resistance
 
         // Update feeder inputs
-        int feederCount = feederVelocitiesRPM.length;
-        inputs.feedersConnected = new boolean[feederCount];
-        inputs.feederMotorsVelocityRPM = new double[feederCount];
+        inputs.feedersConnected = new boolean[] {true};
+        inputs.feederMotorsVelocityRPM = new double[] {feederVelocityRPM};
 
-        double feederTotalVolts = 0.0;
-        double feederTotalCurrent = 0.0;
+        // Simple motor model for feeder
+        double feederBackEMF = feederVelocityRPM * MOTOR_KV;
+        double feederEffectiveVoltage = feederAppliedVolts - feederBackEMF;
+        double feederAcceleration = feederEffectiveVoltage / MOTOR_KV;
 
-        for (int i = 0; i < feederCount; i++) {
-            // All motors are "connected" in simulation
-            inputs.feedersConnected[i] = true;
+        // Update velocity
+        feederVelocityRPM += feederAcceleration * SIMULATION_DT;
+        feederVelocityRPM = Math.max(0, feederVelocityRPM);
 
-            // Apply velocity control if enabled
-            if (feederVelocityControl && i == 0) { // Only control leader in simulation
-                double error = feederTargetRPM[i] - feederVelocitiesRPM[i];
-
-                // PID calculation
-                feederIntegral += error * SIMULATION_DT;
-                double derivative = (error - feederPrevError) / SIMULATION_DT;
-                feederPrevError = error;
-
-                double controlOutput = FEEDER_KP * error + FEEDER_KI * feederIntegral + FEEDER_KD * derivative;
-                controlOutput = MathUtil.clamp(controlOutput, -12.0, 12.0);
-                feederAppliedVolts[i] = controlOutput;
-            }
-
-            // Simple motor model: velocity = (voltage - backEMF) / resistance * KV
-            double backEMF = feederVelocitiesRPM[i] * MOTOR_KV;
-            double effectiveVoltage = feederAppliedVolts[i] - backEMF;
-            double acceleration = (effectiveVoltage / MOTOR_RESISTANCE) * MOTOR_KV / MOTOR_INERTIA;
-
-            // Update velocity
-            feederVelocitiesRPM[i] += acceleration * SIMULATION_DT;
-            feederVelocitiesRPM[i] = Math.max(0, feederVelocitiesRPM[i]); // Can't go negative
-
-            // Set output
-            inputs.feederMotorsVelocityRPM[i] = feederVelocitiesRPM[i];
-
-            // Calculate current: I = (V - backEMF) / R
-            double current = Math.abs(effectiveVoltage) / MOTOR_RESISTANCE;
-            feederTotalCurrent += current;
-
-            // Track applied voltage
-            feederTotalVolts += feederAppliedVolts[i];
-        }
-
-        inputs.feederMotorsAverageVolts = feederCount > 0 ? feederTotalVolts / feederCount : 0.0;
-        inputs.feederMotorsTotalCurrentAmps = feederTotalCurrent;
+        inputs.feederMotorsAverageVolts = feederAppliedVolts;
+        inputs.feederMotorsTotalCurrentAmps = Math.abs(feederEffectiveVoltage) / 0.05;
     }
 
     @Override
     public void setShooterMotorsVoltage(double volts) {
-        shooterVelocityControl = false;
-        shooterIntegral = 0.0;
-        shooterPrevError = 0.0;
-
-        // Apply voltage to all shooter motors (simplified simulation)
-        for (int i = 0; i < shooterVelocitiesRPM.length; i++) {
-            shooterAppliedVolts[i] = volts;
-        }
+        shooterAppliedVolts = volts;
     }
 
     @Override
     public void setFeederMotorsVoltage(double volts) {
-        feederVelocityControl = false;
-        feederIntegral = 0.0;
-        feederPrevError = 0.0;
-
-        // Apply voltage to all feeder motors (simplified simulation)
-        for (int i = 0; i < feederVelocitiesRPM.length; i++) {
-            feederAppliedVolts[i] = volts;
-        }
+        feederAppliedVolts = volts;
     }
 
     @Override
     public void setShooterVelocity(double rpm) {
-        shooterVelocityControl = true;
-        shooterIntegral = 0.0;
-        shooterPrevError = 0.0;
-
-        // Set target RPM for all shooter motors
-        for (int i = 0; i < shooterVelocitiesRPM.length; i++) {
-            shooterTargetRPM[i] = rpm;
-        }
-    }
-
-    @Override
-    public void setFeederVelocity(double rpm) {
-        feederVelocityControl = true;
-        feederIntegral = 0.0;
-        feederPrevError = 0.0;
-
-        // Set target RPM for all feeder motors
-        for (int i = 0; i < feederVelocitiesRPM.length; i++) {
-            feederTargetRPM[i] = rpm;
-        }
+        // For velocity control, use a simple P controller to simulate closed-loop
+        double error = rpm - shooterVelocityRPM;
+        double controlVolts = error * 0.1; // Simple P gain
+        shooterAppliedVolts = MathUtil.clamp(controlVolts, -12.0, 12.0);
     }
 }
