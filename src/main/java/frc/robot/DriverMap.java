@@ -38,6 +38,10 @@ public interface DriverMap extends Subsystem {
 
     Trigger startFeederToShootButton();
 
+    Trigger prepareToShootButton();
+
+    Trigger shootWhenReadyButton();
+
     DoubleSupplier translationalAxisX();
 
     DoubleSupplier translationalAxisY();
@@ -114,6 +118,16 @@ public interface DriverMap extends Subsystem {
         @Override
         public Trigger autoAlignToHubButton() {
             return xboxController.rightBumper();
+        }
+
+        @Override
+        public Trigger prepareToShootButton() {
+            return xboxController.rightBumper();
+        }
+
+        @Override
+        public Trigger shootWhenReadyButton() {
+            return xboxController.rightTrigger(0.5);
         }
 
         @Override
@@ -229,6 +243,16 @@ public interface DriverMap extends Subsystem {
         @Override
         public Trigger autoAlignToHubButton() {
             return ps5Controller.R1();
+        }
+
+        @Override
+        public Trigger prepareToShootButton() {
+            return ps5Controller.R1();
+        }
+
+        @Override
+        public Trigger shootWhenReadyButton() {
+            return ps5Controller.R2();
         }
 
         @Override

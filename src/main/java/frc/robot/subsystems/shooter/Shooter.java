@@ -129,10 +129,18 @@ public class Shooter extends SubsystemBase {
         io.setFeederMotorsVoltage(feederMotorVolts);
     }
 
+    public void setFeederVoltage(double feederMotorVolts) {
+        setFeederMotorVolts(feederMotorVolts);
+    }
+
     private void setShooterVelocity(double rpm) {
         if (!hardwareOK()) rpm = 0;
         shooterTargetRPM = rpm;
         io.setShooterVelocity(0);
+    }
+
+    public void setShooterTargetRPM(double rpm) {
+        setShooterVelocity(rpm);
     }
 
     private void updateTrapezoidalProfile() {

@@ -13,6 +13,11 @@
 
 package frc.robot.commands;
 
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -23,6 +28,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
@@ -39,11 +46,12 @@ import org.ironmaple.utils.FieldMirroringUtils;
 import org.littletonrobotics.junction.Logger;
 
 public class DriveCommands {
-    private static final double DEADBAND = 0.1;
+    private static final double DEADBAND = 0.05;
     private static final double ANGLE_KP = 5.0;
     private static final double ANGLE_KD = 0.4;
-    private static final double ANGLE_MAX_VELOCITY = 8.0;
-    private static final double ANGLE_MAX_ACCELERATION = 20.0;
+    private static final AngularVelocity ANGLE_MAX_VELOCITY = RotationsPerSecond.of(1.5);
+    private static final AngularAcceleration ANGLE_MAX_ACCELERATION = RotationsPerSecondPerSecond.of(4);
+
     private static final double FF_START_DELAY = 2.0; // Secs
     private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
     private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
@@ -103,7 +111,11 @@ public class DriveCommands {
 
         // Create PID controller
         ProfiledPIDController angleController = new ProfiledPIDController(
-                ANGLE_KP, 0.0, ANGLE_KD, new TrapezoidProfile.Constraints(ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
+                ANGLE_KP,
+                0.0,
+                ANGLE_KD,
+                new TrapezoidProfile.Constraints(
+                        ANGLE_MAX_VELOCITY.in(RadiansPerSecond), ANGLE_MAX_ACCELERATION.in(RadiansPerSecondPerSecond)));
         angleController.enableContinuousInput(-Math.PI, Math.PI);
 
         // Construct command
@@ -320,9 +332,6 @@ public class DriveCommands {
     /** Auto-aiming command for the current season's target with reduced sensitivity (0.3x). */
     public static Command autoAim(Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
         return aimAtTarget(
-                drive,
-                () -> xSupplier.getAsDouble() * 0.3, // Reduce sensitivity to 0.3x
-                () -> ySupplier.getAsDouble() * 0.3, // Reduce sensitivity to 0.3x
-                BLUE_TARGET_POSITION);
+                drive, () -> xSupplier.getAsDouble() * 0.4, () -> ySupplier.getAsDouble() * 0.4, BLUE_TARGET_POSITION);
     }
 }

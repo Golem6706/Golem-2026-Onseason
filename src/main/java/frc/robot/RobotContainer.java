@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.ShooterCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIOReal;
@@ -195,13 +196,18 @@ public class RobotContainer {
         // controller.start().onTrue(Commands.runOnce(resetOdometry).ignoringDisable(true));
         controller.resetOdometryButton().onTrue(Commands.runOnce(resetOdometry).ignoringDisable(true));
 
+        // Prepare shooter (accelerate to target RPM based on distance)
         controller
-                .startShooterMotorButton()
-                .whileTrue(shooter.shootCommand(3500.0, () -> false))
+                .prepareToShootButton()
+                .whileTrue(ShooterCommands.prepareToShoot(shooter, drive))
                 .onFalse(shooter.runShooter(0));
 
-        controller.startFeederToShootButton().whileTrue(shooter.runFeeder(6.0)).onFalse(shooter.runFeeder(0.0));
-        // .whileFalse(shooter.runFeederVelocity(0.0).alongWith(arm.intakeIdleCommand()));
+        // Shoot when ready (maintains RPM and shoots when trigger pressed and at reference)
+        controller
+                .shootWhenReadyButton()
+                .whileTrue(ShooterCommands.shootWhenReady(shooter, drive, () -> true))
+                .onFalse(shooter.runShooter(0));
+
         // Auto-aiming binding
         controller
                 .autoAlignToHubButton()
@@ -261,8 +267,6 @@ public class RobotContainer {
         Logger.recordOutput("FieldSimulation/RobotPosition", driveSimulation.getSimulatedDriveTrainPose());
         Logger.recordOutput("FieldSimulation/Fuel", SimulatedArena.getInstance().getGamePiecesArrayByType("Fuel"));
     }
-
-    private boolean motorBrakeEnabled = false;
 
     public void setMotorBrake(boolean brakeModeEnable) {
         // if (this.motorBrakeEnabled == brakeModeEnable) return;

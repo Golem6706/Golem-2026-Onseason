@@ -43,6 +43,8 @@ public final class ShooterContants {
 
     public static final double SHOOTER_VELOCITY_TOLERANCE_RPM = 100.0;
 
+    public static final double PREPARE_TO_SHOOT_TOLERANCE_RPM = 500.0;
+
     public record VoltageSettings(double[] shooterMotorVolts, double[] feederMotorVolts) {
 
         public VoltageSettings {
