@@ -173,7 +173,7 @@ public class ShooterIOReal implements ShooterIO {
     public void setFeederMotorsVoltage(double volts) {
         feederMotors[0].setControl(voltageOut.withOutput(volts));
         for (int i = 1; i < feederMotors.length; i++) {
-            feederMotors[i].setControl(new Follower(feederMotors[0].getDeviceID(), MotorAlignmentValue.Aligned));
+            feederMotors[i].setControl(new Follower(feederMotors[0].getDeviceID(), MotorAlignmentValue.Opposed));
         }
     }
 

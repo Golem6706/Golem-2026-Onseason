@@ -163,9 +163,9 @@ public class RobotContainer {
 
         drive.setDefaultCommand(DriveCommands.joystickDrive(
                 drive,
-                () -> -controller.translationalAxisY().getAsDouble(),
-                () -> -controller.translationalAxisX().getAsDouble(),
-                () -> -controller.rotationalAxisX().getAsDouble()));
+                () -> -controller.translationalAxisY().getAsDouble() * 0.5,
+                () -> -controller.translationalAxisX().getAsDouble() * 0.5,
+                () -> -controller.rotationalAxisX().getAsDouble() * 0.5));
 
         shooter.setDefaultCommand(shooter.idle());
 
@@ -204,8 +204,11 @@ public class RobotContainer {
                 .whileTrue(ShooterCommands.shootCommand(shooter, drive, controller.shootWhenReadyButton()))
                 .whileTrue(DriveCommands.autoAim(
                         drive,
-                        () -> -controller.translationalAxisY().getAsDouble(),
-                        () -> -controller.translationalAxisX().getAsDouble()));
+                        () -> -controller.translationalAxisY().getAsDouble() * 0.5,
+                        () -> -controller.translationalAxisX().getAsDouble() * 0.5));
+
+        // controller.shootWhenReadyButton(shooter.)
+        //           .whileTrue(shooter.setF())
 
         controller
                 .intakeButton()
