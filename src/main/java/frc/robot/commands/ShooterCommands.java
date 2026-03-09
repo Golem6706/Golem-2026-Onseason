@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.shooter.Shooter;
-import java.util.function.BooleanSupplier;
+import org.ironmaple.utils.FieldMirroringUtils;
 import org.littletonrobotics.junction.Logger;
 
 public class ShooterCommands {
@@ -26,7 +26,7 @@ public class ShooterCommands {
 
     public static double getTargetRPM(Drive drive) {
         Translation2d robotPosition = drive.getPose().getTranslation();
-        Translation2d targetPosition = BLUE_TARGET_POSITION;
+        Translation2d targetPosition = FieldMirroringUtils.toCurrentAllianceTranslation(BLUE_TARGET_POSITION);
         double distance = robotPosition.getDistance(targetPosition);
 
         double rpm = distanceToRPMTable.get(distance);

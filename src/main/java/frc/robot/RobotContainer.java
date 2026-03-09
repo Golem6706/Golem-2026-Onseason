@@ -203,9 +203,9 @@ public class RobotContainer {
                 .prepareToShootButton()
                 .whileTrue(ShooterCommands.shootCommand(shooter, drive, controller.shootWhenReadyButton()))
                 .whileTrue(DriveCommands.autoAim(
-                                drive,
-                                () -> controller.translationalAxisY().getAsDouble(),
-                                () -> controller.translationalAxisX().getAsDouble()));
+                        drive,
+                        () -> -controller.translationalAxisY().getAsDouble(),
+                        () -> -controller.translationalAxisX().getAsDouble()));
 
         controller
                 .intakeButton()

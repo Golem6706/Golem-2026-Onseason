@@ -5,15 +5,12 @@ import static frc.robot.subsystems.shooter.ShooterContants.MAX_SHOOTER_RPM;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.util.AlertsManager;
-import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -83,6 +80,7 @@ public class Shooter extends SubsystemBase {
         updateAlerts();
 
         Logger.recordOutput("Shooter/AtVelocityReference", isShooterAtVelocityReference());
+        Logger.recordOutput("Shooter/currentVelocityRPM", getShooterCurrentRPM());
         Logger.recordOutput("Shooter/TargetVelocityRPM", shooterTargetRPM);
     }
 
@@ -137,7 +135,8 @@ public class Shooter extends SubsystemBase {
      * @return true if the shooter is at the target velocity, false otherwise
      */
     public boolean isShooterAtVelocityReference() {
-        return Math.abs(getShooterCurrentRPM() - getShooterTargetRPM()) <= ShooterContants.SHOOTER_VELOCITY_TOLERANCE_RPM;
+        return Math.abs(getShooterCurrentRPM() - getShooterTargetRPM())
+                <= ShooterContants.SHOOTER_VELOCITY_TOLERANCE_RPM;
     }
 
     private void executeControlLoop() {
@@ -153,21 +152,22 @@ public class Shooter extends SubsystemBase {
     @Override
     public Command idle() {
         return run(() -> {
-            io.setShooterMotorsVoltage(0.0);
-            io.setFeederMotorsVoltage(0.0);
-            velocitySlewRateLimiter.reset(0.0);
-            this.shooterTargetRPM = 0.0;
-        }).ignoringDisable(true);
+                    io.setShooterMotorsVoltage(0.0);
+                    io.setFeederMotorsVoltage(0.0);
+                    velocitySlewRateLimiter.reset(0.0);
+                    this.shooterTargetRPM = 0.0;
+                })
+                .ignoringDisable(true);
     }
 
     public Command runSetPoint(DoubleSupplier shooterRPMSupplier, DoubleSupplier feederVoltageSupplier) {
-        return startRun(() -> velocitySlewRateLimiter.reset(getShooterActualRPM()),
-            () -> {
+        return startRun(() -> velocitySlewRateLimiter.reset(getShooterActualRPM()), () -> {
             io.setFeederMotorsVoltage(feederVoltageSupplier.getAsDouble());
 
             this.shooterTargetRPM = shooterRPMSupplier.getAsDouble();
             if (this.shooterTargetRPM < 0.0 || this.shooterTargetRPM > MAX_SHOOTER_RPM)
-                System.out.println("Setting shooter RPM" + this.shooterTargetRPM + " which is out of bound, clampping...");
+                System.out.println(
+                        "Setting shooter RPM" + this.shooterTargetRPM + " which is out of bound, clampping...");
             this.shooterTargetRPM = MathUtil.clamp(this.shooterTargetRPM, 0.0, MAX_SHOOTER_RPM);
 
             executeControlLoop();
