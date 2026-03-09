@@ -93,8 +93,7 @@ public class ShooterIOReal implements ShooterIO {
                                     inverted
                                             ? InvertedValue.Clockwise_Positive
                                             : InvertedValue.CounterClockwise_Positive)
-                            .withNeutralMode(NeutralModeValue.Coast))
-                    .withSlot0(FEEDER_VELOCITY_GAINS);
+                            .withNeutralMode(NeutralModeValue.Brake));
             feederMotors[i].getConfigurator().apply(config);
 
             feederMotorCurrents[i] = feederMotors[i].getSupplyCurrent();

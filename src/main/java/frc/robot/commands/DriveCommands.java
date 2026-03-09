@@ -309,6 +309,8 @@ public class DriveCommands {
 
         // Wrap the command to clear logging data when it ends
         return baseCommand.finallyDo(() -> {
+            drive.stop();
+
             Logger.recordOutput("Drive/TargetAiming/DeltaX", 0.0);
             Logger.recordOutput("Drive/TargetAiming/DeltaY", 0.0);
             Logger.recordOutput("Drive/TargetAiming/DesiredAngleRad", 0.0);

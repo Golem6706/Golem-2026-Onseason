@@ -167,6 +167,8 @@ public class RobotContainer {
                 () -> -controller.translationalAxisX().getAsDouble(),
                 () -> -controller.rotationalAxisX().getAsDouble()));
 
+        shooter.setDefaultCommand(shooter.idle());
+
         // Lock to 0° when A button is held
         // controller
         //         .a()
@@ -199,22 +201,11 @@ public class RobotContainer {
         // Prepare shooter (accelerate to target RPM based on distance)
         controller
                 .prepareToShootButton()
-                .whileTrue(ShooterCommands.prepareToShoot(shooter, drive))
-                .onFalse(shooter.runShooter(0));
-
-        // Shoot when ready (maintains RPM and shoots when trigger pressed and at reference)
-        controller
-                .shootWhenReadyButton()
-                .whileTrue(ShooterCommands.shootWhenReady(shooter, drive, () -> true))
-                .onFalse(shooter.runShooter(0));
-
-        // Auto-aiming binding
-        controller
-                .autoAlignToHubButton()
+                .whileTrue(ShooterCommands.shootCommand(shooter, drive, controller.shootWhenReadyButton()))
                 .whileTrue(DriveCommands.autoAim(
-                        drive,
-                        () -> controller.translationalAxisY().getAsDouble(),
-                        () -> controller.translationalAxisX().getAsDouble()));
+                                drive,
+                                () -> controller.translationalAxisY().getAsDouble(),
+                                () -> controller.translationalAxisX().getAsDouble()));
 
         controller
                 .intakeButton()
