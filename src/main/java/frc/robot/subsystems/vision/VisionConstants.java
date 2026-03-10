@@ -42,7 +42,7 @@ public class VisionConstants {
             new Rotation3d(Degrees.zero(), Degrees.of(-12), Degrees.zero())); // Pitch upwards 24 degrees
 
     // Basic filtering thresholds
-    public static double maxAmbiguity = 0.6;
+    public static double maxAmbiguity = 0.3;
     public static double maxZError = 0.5;
 
     // Standard deviation baselines, for 1 meter distance and 1 tag
