@@ -17,6 +17,7 @@ import static edu.wpi.first.units.Units.*;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -26,7 +27,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ShooterCommands;
 import frc.robot.generated.TunerConstants;
@@ -120,28 +121,43 @@ public class RobotContainer {
         arm = new Arm(new ArmIOReal());
 
         // Set up auto routines
+        configureNamedCommands();
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
         // Set up SysId routines
-        autoChooser.addOption("Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-        autoChooser.addOption("Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-        autoChooser.addOption(
-                "Drive SysId (Quasistatic Forward)", drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        autoChooser.addOption(
-                "Drive SysId (Quasistatic Reverse)", drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        autoChooser.addOption("Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        autoChooser.addOption("Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        // autoChooser.addOption("Drive Wheel Radius Characterization",
+        // DriveCommands.wheelRadiusCharacterization(drive));
+        // autoChooser.addOption("Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+        // autoChooser.addOption(
+        //         "Drive SysId (Quasistatic Forward)", drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        // autoChooser.addOption(
+        //         "Drive SysId (Quasistatic Reverse)", drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        // autoChooser.addOption("Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        // autoChooser.addOption("Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-        // Shooter SysId options
-        autoChooser.addOption(
-                "Shooter SysId (Quasistatic Forward)", shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        autoChooser.addOption(
-                "Shooter SysId (Quasistatic Reverse)", shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        autoChooser.addOption("Shooter SysId (Dynamic Forward)", shooter.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        autoChooser.addOption("Shooter SysId (Dynamic Reverse)", shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        // // Shooter SysId options
+        // autoChooser.addOption(
+        //         "Shooter SysId (Quasistatic Forward)", shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        // autoChooser.addOption(
+        //         "Shooter SysId (Quasistatic Reverse)", shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        // autoChooser.addOption("Shooter SysId (Dynamic Forward)",
+        // shooter.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        // autoChooser.addOption("Shooter SysId (Dynamic Reverse)",
+        // shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
         // Configure the button bindings
         configureButtonBindings();
+    }
+
+    private void configureNamedCommands() {
+        Command prepareShoot = ShooterCommands.shootCommand(shooter, drive, new Trigger(() -> false));
+        NamedCommands.registerCommand("PrepareShoot", Commands.runOnce(prepareShoot::schedule));
+        Command shoot = ShooterCommands.shootCommand(shooter, drive, new Trigger(() -> true))
+                .withTimeout(2.5);
+        NamedCommands.registerCommand("ShootCommand", Commands.runOnce(shoot::schedule));
+
+        NamedCommands.registerCommand("IntakeON", Commands.runOnce(runIntakeAndArmDropingCommand()::schedule));
+        NamedCommands.registerCommand("IntakeOFF", Commands.runOnce(runIntakeIdleAndArmHoldingingCommand()::schedule));
     }
 
     /**
