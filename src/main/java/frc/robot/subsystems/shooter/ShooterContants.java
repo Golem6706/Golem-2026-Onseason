@@ -26,7 +26,7 @@ public final class ShooterContants {
             new int[] {15, 16}, new boolean[] {false, false}, new int[] {14, 13}, new boolean[] {false, false});
 
     public static final Slot0Configs SHOOTER_VELOCITY_GAINS =
-            new Slot0Configs().withKP(0.1).withKI(0.0).withKD(0.0).withKS(0.0).withKV(0.12);
+            new Slot0Configs().withKP(0.25).withKI(0.0).withKD(0.0).withKS(0.2).withKV(0.124);
 
     public static final double MAX_SHOOTER_RPM = 6000.0;
     public static final double MAX_FEEDER_RPM = 3000.0;

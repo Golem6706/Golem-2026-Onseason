@@ -10,7 +10,7 @@ import org.ironmaple.utils.FieldMirroringUtils;
 import org.littletonrobotics.junction.Logger;
 
 public class ShooterCommands {
-    private static final Translation2d BLUE_TARGET_POSITION = new Translation2d(17.548 - 11.915, 4.0);
+    private static final Translation2d BLUE_TARGET_POSITION = new Translation2d(4.6, 4.0);
 
     private static final InterpolatingDoubleTreeMap distanceToRPMTable = new InterpolatingDoubleTreeMap();
 

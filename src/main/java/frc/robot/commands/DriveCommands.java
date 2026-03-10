@@ -275,7 +275,7 @@ public class DriveCommands {
     }
 
     // Target positions for auto-aiming (example coordinates - adjust as needed)
-    public static final Translation2d BLUE_TARGET_POSITION = new Translation2d(17.548 - 11.915, 4.0);
+    public static final Translation2d BLUE_TARGET_POSITION = new Translation2d(4.6, 4.05);
 
     /**
      * Field relative drive command that aims at a target position on the field. Uses joystick for linear control and
