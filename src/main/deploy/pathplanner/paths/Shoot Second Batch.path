@@ -32,7 +32,7 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.599052346570397,
+      "minWaypointRelativePos": 0.40000000000000274,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 1.0,
@@ -65,7 +65,7 @@
     },
     {
       "name": "PrepareShoot",
-      "waypointRelativePos": 0.40072907265342983,
+      "waypointRelativePos": 0.4967032967033019,
       "endWaypointRelativePos": null,
       "command": null
     }

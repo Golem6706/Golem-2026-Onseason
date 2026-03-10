@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 7.8302431596033095,
-        "y": 5.39131800263984
+        "y": 4.8
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.630243159603309,
-        "y": 5.39131800263984
+        "x": 5.711418554476807,
+        "y": 5.6738619201726
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +20,8 @@
         "y": 5.258578009061073
       },
       "prevControl": {
-        "x": 4.5155451359160965,
-        "y": 5.996211160459475
+        "x": 4.273133764832794,
+        "y": 5.6640776699029125
       },
       "nextControl": null,
       "isLocked": false,
@@ -88,7 +88,7 @@
     },
     {
       "name": "ShooterON",
-      "waypointRelativePos": 0.7697709837545126,
+      "waypointRelativePos": 0.7413919413919496,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",

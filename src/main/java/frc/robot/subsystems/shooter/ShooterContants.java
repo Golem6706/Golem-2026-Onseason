@@ -31,12 +31,12 @@ public final class ShooterContants {
     public static final double MAX_SHOOTER_RPM = 6000.0;
     public static final double MAX_FEEDER_RPM = 3000.0;
 
-    public static final double SHOOTER_ACCELERATION_RPM_PER_SEC = 9000.0;
+    public static final double SHOOTER_ACCELERATION_RPM_PER_SEC = 5000.0;
 
     public static final double SHOOTER_VELOCITY_TOLERANCE_RPM = 100.0;
 
     public static final double PREPARE_TO_SHOOT_TOLERANCE_RPM = 500.0;
 
-    public static final Current SHOOTER_MOTORS_CURRENT_LIMIT = Amps.of(20);
+    public static final Current SHOOTER_MOTORS_CURRENT_LIMIT = Amps.of(40);
     public static final Current FEEDER_MOTORS_CURRENT_LIMIT = Amps.of(15);
 }
