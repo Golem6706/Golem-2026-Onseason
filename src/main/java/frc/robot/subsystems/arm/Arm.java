@@ -269,8 +269,7 @@ public class Arm extends SubsystemBase {
                 Commands.waitSeconds(1.0),
                 armDroppingCommand(),
                 Commands.waitSeconds(0.5),
-                moveToPosition(ARM_TOGGLE_ANGLE_HIGH)
-                );
+                moveToPosition(ARM_TOGGLE_ANGLE_HIGH));
     }
 
     /** Upright the arm to the starting position */

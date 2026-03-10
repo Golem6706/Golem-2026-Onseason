@@ -37,6 +37,6 @@ public final class ShooterContants {
 
     public static final double PREPARE_TO_SHOOT_TOLERANCE_RPM = 500.0;
 
-    public static final Current SHOOTER_MOTORS_CURRENT_LIMIT = Amps.of(40);
+    public static final Current SHOOTER_MOTORS_CURRENT_LIMIT = Amps.of(60);
     public static final Current FEEDER_MOTORS_CURRENT_LIMIT = Amps.of(15);
 }
