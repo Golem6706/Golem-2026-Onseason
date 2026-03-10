@@ -20,15 +20,14 @@ public final class ArmConstants {
     public static final Current OVERHEAT_PROTECTION_CURRENT = Amps.of(40);
 
     public static final Current ARM_CURRENT_LIMIT = Amps.of(20.0);
-    public static final Voltage ARM_MAX_VOLTAGE = Volts.of(6.0);
+    public static final Voltage ARM_MAX_VOLTAGE = Volts.of(4.0);
 
     public static final Current INTAKE_CURRENT_LIMIT = Amps.of(30);
     public static final Voltage INTAKE_MAX_VOLTAGE = Volts.of(8.0);
     public static final Voltage INTAKE_VOLTAGE = Volts.of(9.5);
-
     // The setpoint angle for arm to intake from ground
     public static final Angle ARM_INTAKING_ANGLE = Degrees.of(15);
-    public static final Angle ARM_ANGLE_HOLDING = Degrees.of(25);
+    public static final Angle ARM_ANGLE_HOLDING = Degrees.of(35);
     public static final Angle ARM_STARTING_ANGLE = Degrees.of(90);
 
     public record ArmHardwareConstants(
@@ -81,7 +80,7 @@ public final class ArmConstants {
 
     public static final ArmPIDConstants PID_CONSTANTS = new ArmPIDConstants(
             0.05,
-            0.08, //
+            0.08,
             0.34,
             0.01,
             6.0 / Math.toRadians(30),
