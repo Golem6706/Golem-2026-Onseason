@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.43795686368967823,
-        "y": 5.49086518724866
+        "x": 0.438,
+        "y": 5.2
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.4392274147971897,
-        "y": 5.074695860387254
+        "x": 0.7708422301304869,
+        "y": 5.223890865954923
       },
       "isLocked": false,
       "linkedName": null
@@ -64,10 +64,15 @@
       "command": null
     },
     {
-      "name": "PrepareShoot",
+      "name": "ShooterON",
       "waypointRelativePos": 0.5966850828729277,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "ShooterON"
+        }
+      }
     }
   ],
   "globalConstraints": {

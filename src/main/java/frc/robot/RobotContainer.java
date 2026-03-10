@@ -152,8 +152,16 @@ public class RobotContainer {
     private void configureNamedCommands() {
         Command prepareShoot = ShooterCommands.shootCommand(shooter, drive, new Trigger(() -> false));
         NamedCommands.registerCommand("ShooterON", Commands.runOnce(prepareShoot::schedule));
+        Command toggleIntake = Commands.sequence(
+                Commands.waitSeconds(0.5),
+                Commands.runOnce(arm.armUprightCommand()::schedule),
+                Commands.waitSeconds(1.0),
+                Commands.runOnce(arm.armHoldingCommand()::schedule),
+                Commands.waitSeconds(0.5),
+                Commands.runOnce(arm.armUprightCommand()::schedule)
+                );
         Command shoot = ShooterCommands.shootCommand(shooter, drive, new Trigger(() -> true))
-                .withTimeout(3);
+                .withTimeout(3).deadlineFor(toggleIntake);
         NamedCommands.registerCommand(
                 "ShootCommand", Commands.runOnce(shoot::schedule).andThen(Commands.waitSeconds(2.5)));
 
