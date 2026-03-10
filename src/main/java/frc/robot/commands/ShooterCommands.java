@@ -17,9 +17,9 @@ public class ShooterCommands {
     static {
         distanceToRPMTable.put(2.5, 2600.0);
         distanceToRPMTable.put(3.0, 2800.0);
-        distanceToRPMTable.put(3.5, 3000.0);
-        distanceToRPMTable.put(4.0, 3200.0);
-        distanceToRPMTable.put(4.5, 3400.0);
+        distanceToRPMTable.put(3.5, 3200.0);
+        distanceToRPMTable.put(4.0, 3400.0);
+        distanceToRPMTable.put(4.5, 3500.0);
     }
 
     private ShooterCommands() {}
