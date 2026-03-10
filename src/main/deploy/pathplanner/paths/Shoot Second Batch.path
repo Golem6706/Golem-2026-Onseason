@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.2982137022453082,
-        "y": 5.517913245643431
+        "x": 0.4392274147971897,
+        "y": 5.074695860387254
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.644554917895442,
-        "y": 5.307728248575737
+        "x": 2.5,
+        "y": 5.2
       },
       "prevControl": {
-        "x": 2.323284601206434,
-        "y": 5.450040528652815
+        "x": 2.10498220640135,
+        "y": 5.259335705812615
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,7 +32,7 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.40000000000000274,
+      "minWaypointRelativePos": 0.5730071033938415,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 1.0,
@@ -51,7 +51,7 @@
         "y": 4.05
       },
       "rotationOffset": 0.0,
-      "minWaypointRelativePos": 0.6019503046028891,
+      "minWaypointRelativePos": 0.7024467245461693,
       "maxWaypointRelativePos": 1.0,
       "name": "Point Towards Zone"
     }
@@ -65,7 +65,7 @@
     },
     {
       "name": "PrepareShoot",
-      "waypointRelativePos": 0.4967032967033019,
+      "waypointRelativePos": 0.5966850828729277,
       "endWaypointRelativePos": null,
       "command": null
     }
@@ -80,12 +80,12 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -32.75862446065987
+    "rotation": -28.99478186257682
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
-    "velocity": 0,
+    "velocity": 0.0,
     "rotation": -90.70380107879109
   },
   "useDefaultConstraints": true

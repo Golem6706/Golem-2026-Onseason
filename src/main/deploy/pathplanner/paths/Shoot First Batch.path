@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 2.966102980522261,
-        "y": 5.258578009061073
+        "x": 2.3,
+        "y": 5.6
       },
       "prevControl": {
-        "x": 4.273133764832794,
-        "y": 5.6640776699029125
+        "x": 3.5467141162514837,
+        "y": 5.654258600237247
       },
       "nextControl": null,
       "isLocked": false,
@@ -37,7 +37,7 @@
   "constraintZones": [
     {
       "name": "Slow Down to Shoot",
-      "minWaypointRelativePos": 0.8544105879380054,
+      "minWaypointRelativePos": 0.8539857932123136,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 1.0,
@@ -50,8 +50,8 @@
     },
     {
       "name": "Ramp",
-      "minWaypointRelativePos": 0.502226878369272,
-      "maxWaypointRelativePos": 0.8491092486522914,
+      "minWaypointRelativePos": 0.38674033149171955,
+      "maxWaypointRelativePos": 0.6661404893449097,
       "constraints": {
         "maxVelocity": 1.5,
         "maxAcceleration": 3.0,
@@ -108,7 +108,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -36.385528062595405
+    "rotation": -33.75939920200005
   },
   "reversed": false,
   "folder": null,
