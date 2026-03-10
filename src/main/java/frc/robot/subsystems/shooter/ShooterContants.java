@@ -23,7 +23,7 @@ public final class ShooterContants {
     }
 
     public static final ShooterHardwareConstants SHOOTERHARDWARE_CONSTANTS = new ShooterHardwareConstants(
-            new int[] {15, 17}, new boolean[] {false, false}, new int[] {14, 13}, new boolean[] {false, false});
+            new int[] {15, 16}, new boolean[] {false, false}, new int[] {14, 13}, new boolean[] {false, false});
 
     public static final Slot0Configs SHOOTER_VELOCITY_GAINS =
             new Slot0Configs().withKP(0.1).withKI(0.0).withKD(0.0).withKS(0.0).withKV(0.12);
