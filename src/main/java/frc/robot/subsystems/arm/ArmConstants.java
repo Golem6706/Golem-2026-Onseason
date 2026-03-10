@@ -28,6 +28,9 @@ public final class ArmConstants {
     // The setpoint angle for arm to intake from ground
     public static final Angle ARM_INTAKING_ANGLE = Degrees.of(15);
     public static final Angle ARM_ANGLE_HOLDING = Degrees.of(35);
+
+    // Toggle angle when shooting, this helps feeder
+    public static final Angle ARM_TOGGLE_ANGLE_HIGH = Degrees.of(55);
     public static final Angle ARM_STARTING_ANGLE = Degrees.of(90);
 
     public record ArmHardwareConstants(

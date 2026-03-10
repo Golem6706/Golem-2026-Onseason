@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.util.AlertsManager;
@@ -259,6 +260,17 @@ public class Arm extends SubsystemBase {
 
     public Command armHoldingCommand() {
         return moveToPosition(ARM_ANGLE_HOLDING);
+    }
+
+    public Command armShootingToggleCommand() {
+        return Commands.sequence(
+                Commands.waitSeconds(0.5),
+                moveToPosition(ARM_TOGGLE_ANGLE_HIGH),
+                Commands.waitSeconds(1.0),
+                armDroppingCommand(),
+                Commands.waitSeconds(0.5),
+                moveToPosition(ARM_TOGGLE_ANGLE_HIGH)
+                );
     }
 
     /** Upright the arm to the starting position */
