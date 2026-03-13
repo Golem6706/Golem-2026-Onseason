@@ -3,40 +3,62 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.453,
-        "y": 5.2
+        "x": 6.7,
+        "y": 3.5
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.7858422301304869,
-        "y": 5.223890865954923
+        "x": 6.106313253012048,
+        "y": 1.9150240963855412
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.8,
-        "y": 5.1
+        "x": 2.3,
+        "y": 3.5
       },
       "prevControl": {
-        "x": 1.1443373493975904,
-        "y": 5.22612048192771
+        "x": 2.1077951807228916,
+        "y": 1.8931686746987966
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.25809128630706546,
+      "rotationDegrees": 18.47
+    },
+    {
+      "waypointRelativePos": 0.648132780082992,
+      "rotationDegrees": 18.47
+    }
+  ],
   "constraintZones": [
     {
-      "name": "Shoote Zone",
-      "minWaypointRelativePos": 0.5687344913151366,
+      "name": "Read to Shoot",
+      "minWaypointRelativePos": 0.7950372208436606,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 1.0,
-        "maxAcceleration": 4.5,
+        "maxAcceleration": 1.8,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Ramp Zone",
+      "minWaypointRelativePos": 0.1736972704714692,
+      "maxWaypointRelativePos": 0.6779156327543367,
+      "constraints": {
+        "maxVelocity": 1.5,
+        "maxAcceleration": 3.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -47,25 +69,19 @@
   "pointTowardsZones": [
     {
       "fieldPosition": {
-        "x": 4.6,
-        "y": 4.05
+        "x": 4.625,
+        "y": 4.03
       },
       "rotationOffset": 0.0,
-      "minWaypointRelativePos": 0.7024467245461693,
+      "minWaypointRelativePos": 0.8942928039702173,
       "maxWaypointRelativePos": 1.0,
       "name": "Point Towards Zone"
     }
   ],
   "eventMarkers": [
     {
-      "name": "IntakeOFF",
-      "waypointRelativePos": 0.29875930521091487,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
       "name": "ShooterON",
-      "waypointRelativePos": 0.48138957816377914,
+      "waypointRelativePos": 0.6660049627791577,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -85,13 +101,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -20.0
+    "rotation": 14.999999999999998
   },
   "reversed": false,
-  "folder": "LeftFieldBatch",
+  "folder": "RightFieldBatch",
   "idealStartingState": {
     "velocity": 0.0,
-    "rotation": -90.70380107879109
+    "rotation": 90.3364059206006
   },
   "useDefaultConstraints": true
 }

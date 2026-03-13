@@ -3,41 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.3,
-        "y": 5.2
+        "x": 2.9,
+        "y": 4.7
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.315421686746988,
-        "y": 6.108590361445783
+        "x": 2.915421686746988,
+        "y": 5.608590361445783
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.3636867469879512,
-        "y": 6.952698795180722
+        "x": 5.745698795180723,
+        "y": 5.925493975903614
       },
       "prevControl": {
-        "x": 1.6259518072289159,
-        "y": 6.788783132530121
+        "x": 5.391219929498547,
+        "y": 5.846133035825515
       },
       "nextControl": {
-        "x": 0.7072551055270041,
-        "y": 7.36296857109381
+        "x": 6.477855421686746,
+        "y": 6.0894096385542165
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 0.453,
-        "y": 5.2
+        "x": 7.76,
+        "y": 5.0
       },
       "prevControl": {
-        "x": 0.44575903614457796,
-        "y": 7.257024096385542
+        "x": 7.636192771084337,
+        "y": 6.1003373493975905
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,8 +46,12 @@
   ],
   "rotationTargets": [
     {
+      "waypointRelativePos": 0.3302904564315431,
+      "rotationDegrees": -0.0
+    },
+    {
       "waypointRelativePos": 1,
-      "rotationDegrees": -105.75117366345305
+      "rotationDegrees": 0.0
     }
   ],
   "constraintZones": [
@@ -69,7 +73,7 @@
   "eventMarkers": [
     {
       "name": "IntakeON",
-      "waypointRelativePos": 0.6213399503722109,
+      "waypointRelativePos": 0.9071960297766793,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -92,7 +96,7 @@
     "rotation": -90.0
   },
   "reversed": false,
-  "folder": "LeftFieldBatch",
+  "folder": "LeftFieldBatchDepot",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -33.880885202222366

@@ -81,12 +81,12 @@
       }
     },
     {
-      "name": "Intake Zone",
+      "name": "Constraints Zone",
       "minWaypointRelativePos": 2.2719602977667215,
       "maxWaypointRelativePos": 2.9866004962779025,
       "constraints": {
-        "maxVelocity": 2.0,
-        "maxAcceleration": 4.0,
+        "maxVelocity": 1.5,
+        "maxAcceleration": 3.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -121,7 +121,7 @@
     "rotation": -90.0
   },
   "reversed": false,
-  "folder": "LeftFieldBatch",
+  "folder": "LeftFieldBatchDepot",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

@@ -15,7 +15,7 @@ public class ShooterCommands {
     private static final InterpolatingDoubleTreeMap distanceToRPMTable = new InterpolatingDoubleTreeMap();
 
     static {
-        distanceToRPMTable.put(2.0, 2400.0);
+        distanceToRPMTable.put(2.0, 2500.0); //
         distanceToRPMTable.put(2.5, 2600.0);
         distanceToRPMTable.put(3.0, 2800.0);
         distanceToRPMTable.put(3.5, 3000.0);

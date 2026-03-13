@@ -1,0 +1,49 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Depot_Grab First Batch"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Depot_Shoot First Batch"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootCommand"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Depot_Grab Second Batch"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Depot_Shoot Second Batch"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootCommand"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
