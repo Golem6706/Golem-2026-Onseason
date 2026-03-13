@@ -45,14 +45,14 @@ public class VisionConstants {
 
     public static Transform3d robotToBackLeftCamera = new Transform3d(
             Inches.of(-(27 / 2 - 12.5 / 2.54 + 0.78)),
-            Inches.of(25.5 / 2 - 11.8 / 2.54), //
+            Inches.of(25.5 / 2 - 11.8 / 2.54),
             Inches.of(21.5).plus(Inches.of(6)),
-            new Rotation3d(Degrees.zero(), Degrees.of(-12), Degrees.zero()));
+            new Rotation3d(Degrees.zero(), Degrees.of(-12), Degrees.of(180)));
     public static Transform3d robotToBackRightCamera = new Transform3d(
             Inches.of(-(27 / 2 - 12.5 / 2.54 + 0.78)),
             Inches.of(-(25.5 / 2 - 11.8 / 2.54)),
             Inches.of(21.5).plus(Inches.of(6)),
-            new Rotation3d(Degrees.zero(), Degrees.of(-12), Degrees.zero()));
+            new Rotation3d(Degrees.zero(), Degrees.of(-12), Degrees.of(180)));
 
     // Basic filtering thresholds
     public static double maxAmbiguity = 0.3;
