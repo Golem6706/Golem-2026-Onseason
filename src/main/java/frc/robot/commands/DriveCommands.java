@@ -36,13 +36,13 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.util.FieldMirroringUtils;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-import org.ironmaple.utils.FieldMirroringUtils;
 import org.littletonrobotics.junction.Logger;
 
 public class DriveCommands {
@@ -303,6 +303,7 @@ public class DriveCommands {
             Logger.recordOutput("Drive/TargetAiming/CurrentAngleRad", currentAngle.getRadians());
             Logger.recordOutput("Drive/TargetAiming/AngleErrorRad", angleError);
             Logger.recordOutput("Drive/TargetAiming/Distance", delta.getNorm());
+            Logger.recordOutput("Drive/TargetAiming/Target", targetPosition);
 
             return desiredAngle;
         });
