@@ -28,6 +28,8 @@ public class VisionConstants {
     // Camera names, must match names configured on coprocessor
     public static String camera0Name = "frontLeftCam";
     public static String camera1Name = "frontRightCam";
+    public static String backLeftCamera = "backLeftCam";
+    public static String backRightCamera = "backRightCam";
 
     // Robot to camera transforms
     public static Transform3d robotToCamera0 = new Transform3d(
@@ -39,7 +41,18 @@ public class VisionConstants {
             Inches.of(-(27 / 2 - 12.5 / 2.54)), // Forward 27.5/2 inch
             Inches.of(-(25.5 / 2 - 11.8 / 2.54)), // Rightw
             Inches.of(21.5).plus(Inches.of(6)), // Height 2 inch + Chassis Height 4 inch
-            new Rotation3d(Degrees.zero(), Degrees.of(-12), Degrees.zero())); // Pitch upwards 24 degrees
+            new Rotation3d(Degrees.zero(), Degrees.of(-12), Degrees.zero())); // Pitch upwards 12 degrees
+
+    public static Transform3d robotToBackLeftCamera = new Transform3d(
+            Inches.of(-(27 / 2 - 12.5 / 2.54 + 0.78)),
+            Inches.of(25.5 / 2 - 11.8 / 2.54), //
+            Inches.of(21.5).plus(Inches.of(6)),
+            new Rotation3d(Degrees.zero(), Degrees.of(-12), Degrees.zero()));
+    public static Transform3d robotToBackRightCamera = new Transform3d(
+            Inches.of(-(27 / 2 - 12.5 / 2.54 + 0.78)),
+            Inches.of(-(25.5 / 2 - 11.8 / 2.54)),
+            Inches.of(21.5).plus(Inches.of(6)),
+            new Rotation3d(Degrees.zero(), Degrees.of(-12), Degrees.zero()));
 
     // Basic filtering thresholds
     public static double maxAmbiguity = 0.3;
@@ -54,7 +67,8 @@ public class VisionConstants {
     // (Adjust to trust some cameras more than others)
     public static double[] cameraStdDevFactors = new double[] {
         1.0, // Camera 0
-        1.0 // Camera 1
+        1.0, // Camera 1
+        1.0, 1.0
     };
 
     // Multipliers to apply for MegaTag 2 observations

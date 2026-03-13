@@ -77,10 +77,17 @@ public class RobotContainer {
                         new ModuleIOTalonFX(TunerConstants.BackLeft),
                         new ModuleIOTalonFX(TunerConstants.BackRight),
                         (robotPose) -> {});
+                // vision = new Vision(
+                //         drive,
+                //         new VisionIOPhotonVision(VisionConstants.camera0Name, VisionConstants.robotToCamera0),
+                //         new VisionIOPhotonVision(VisionConstants.camera1Name, VisionConstants.robotToCamera1));
                 vision = new Vision(
                         drive,
                         new VisionIOPhotonVision(VisionConstants.camera0Name, VisionConstants.robotToCamera0),
-                        new VisionIOPhotonVision(VisionConstants.camera1Name, VisionConstants.robotToCamera1));
+                        new VisionIOPhotonVision(VisionConstants.camera1Name, VisionConstants.robotToCamera1),
+                        new VisionIOPhotonVision(VisionConstants.backLeftCamera, VisionConstants.robotToBackLeftCamera),
+                        new VisionIOPhotonVision(
+                                VisionConstants.backRightCamera, VisionConstants.robotToBackRightCamera));
                 break;
 
             case SIM:
@@ -101,7 +108,11 @@ public class RobotContainer {
                         new VisionIOPhotonVisionSim(
                                 camera0Name, robotToCamera0, driveSimulation::getSimulatedDriveTrainPose),
                         new VisionIOPhotonVisionSim(
-                                camera1Name, robotToCamera1, driveSimulation::getSimulatedDriveTrainPose));
+                                camera1Name, robotToCamera1, driveSimulation::getSimulatedDriveTrainPose),
+                        new VisionIOPhotonVisionSim(
+                                backLeftCamera, robotToBackLeftCamera, driveSimulation::getSimulatedDriveTrainPose),
+                        new VisionIOPhotonVisionSim(
+                                backRightCamera, robotToBackRightCamera, driveSimulation::getSimulatedDriveTrainPose));
                 break;
 
             default:
@@ -113,7 +124,7 @@ public class RobotContainer {
                         new ModuleIO() {},
                         new ModuleIO() {},
                         (robotPose) -> {});
-                vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
+                vision = new Vision(drive, new VisionIO() {}, new VisionIO() {}, new VisionIO() {}, new VisionIO() {});
                 break;
         }
 
@@ -153,10 +164,11 @@ public class RobotContainer {
         Command prepareShoot = ShooterCommands.shootCommand(shooter, drive, new Trigger(() -> false));
         NamedCommands.registerCommand("ShooterON", Commands.runOnce(prepareShoot::schedule));
         Command shoot = ShooterCommands.shootCommand(shooter, drive, new Trigger(() -> true))
-                .withTimeout(3)
+                .withTimeout(4)
                 .deadlineFor(arm.armShootingToggleCommand());
+
         NamedCommands.registerCommand(
-                "ShootCommand", Commands.runOnce(shoot::schedule).andThen(Commands.waitSeconds(2.5)));
+                "ShootCommand", Commands.runOnce(shoot::schedule).andThen(Commands.waitSeconds(3.5)));
 
         NamedCommands.registerCommand("IntakeON", Commands.runOnce(runIntakeAndArmDropingCommand()::schedule));
         NamedCommands.registerCommand("IntakeOFF", Commands.runOnce(runIntakeIdleAndArmHoldingingCommand()::schedule));
@@ -181,9 +193,9 @@ public class RobotContainer {
 
         drive.setDefaultCommand(DriveCommands.joystickDrive(
                 drive,
-                () -> -controller.translationalAxisY().getAsDouble() * 0.5,
-                () -> -controller.translationalAxisX().getAsDouble() * 0.5,
-                () -> -controller.rotationalAxisX().getAsDouble() * 0.5));
+                () -> -controller.translationalAxisY().getAsDouble() * 0.6,
+                () -> -controller.translationalAxisX().getAsDouble() * 0.6,
+                () -> -controller.rotationalAxisX().getAsDouble() * 0.55));
 
         shooter.setDefaultCommand(shooter.idle());
 
@@ -236,6 +248,12 @@ public class RobotContainer {
         viceController.leftBumper().onTrue(arm.armDroppingCommand());
         viceController.rightBumper().onTrue(arm.armUprightCommand());
         viceController.a().onTrue(arm.armHoldingCommand());
+        viceController.b().onTrue(arm.armToggingCommand());
+
+        Command shoot = ShooterCommands.shootCommand(shooter, drive, new Trigger(() -> true))
+                .withTimeout(4)
+                .deadlineFor(arm.armShootingToggleCommand());
+        viceController.y().onTrue(Commands.runOnce(shoot::schedule).andThen(Commands.waitSeconds(4.5)));
     }
 
     public Command runIntakeAndArmDropingCommand() {

@@ -262,14 +262,27 @@ public class Arm extends SubsystemBase {
         return moveToPosition(ARM_ANGLE_HOLDING);
     }
 
+    public Command armToggingCommand() {
+        return moveToPosition(ARM_TOGGLE_ANGLE_HIGH);
+    }
+
     public Command armShootingToggleCommand() {
         return Commands.sequence(
-                Commands.waitSeconds(0.5),
+                Commands.waitSeconds(0.2),
                 moveToPosition(ARM_TOGGLE_ANGLE_HIGH),
-                Commands.waitSeconds(1.0),
+                Commands.waitSeconds(0.3),
                 armDroppingCommand(),
-                Commands.waitSeconds(0.5),
-                moveToPosition(ARM_TOGGLE_ANGLE_HIGH));
+                Commands.waitSeconds(0.3),
+                moveToPosition(ARM_TOGGLE_ANGLE_HIGH),
+                Commands.waitSeconds(0.8),
+                armDroppingCommand(),
+                Commands.waitSeconds(0.3),
+                moveToPosition(ARM_TOGGLE_ANGLE_HIGH),
+                Commands.waitSeconds(0.8),
+                armDroppingCommand(),
+                Commands.waitSeconds(0.3),
+                moveToPosition(ARM_TOGGLE_ANGLE_HIGH),
+                Commands.waitSeconds(2.0));
     }
 
     /** Upright the arm to the starting position */
