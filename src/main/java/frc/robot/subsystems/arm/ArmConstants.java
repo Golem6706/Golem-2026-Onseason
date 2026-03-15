@@ -23,14 +23,22 @@ public final class ArmConstants {
     public static final Voltage ARM_MAX_VOLTAGE = Volts.of(4.0);
 
     public static final Current INTAKE_CURRENT_LIMIT = Amps.of(45);
-    public static final Voltage INTAKE_MAX_VOLTAGE = Volts.of(8.0);
+    public static final Voltage INTAKE_MAX_VOLTAGE = Volts.of(10.0);
     public static final Voltage INTAKE_VOLTAGE = Volts.of(9.5);
+    public static final Voltage REVERT_INTAKE_VOLTAGE = Volts.of(-8.5);
+
+    public static final Voltage INTAKE_VOLTAGE_FOR_AUTO_ONLY = Volts.of(10.5);
     // The setpoint angle for arm to intake from ground
-    public static final Angle ARM_INTAKING_ANGLE = Degrees.of(15);
+    public static final Angle ARM_INTAKING_ANGLE = Degrees.of(13);
     public static final Angle ARM_ANGLE_HOLDING = Degrees.of(35);
 
     // Toggle angle when shooting, this helps feeder
-    public static final Angle ARM_TOGGLE_ANGLE_HIGH = Degrees.of(55);
+    public static final Angle ARM_TOGGLE_ANGLE_01 = Degrees.of(45);
+    public static final Angle ARM_TOGGLE_ANGLE_02 = Degrees.of(55);
+    public static final Angle ARM_TOGGLE_ANGLE_03 = Degrees.of(65);
+    public static final Angle ARM_TOGGLE_ANGLE_04 = Degrees.of(75);
+    public static final Angle ARM_TOGGLE_ANGLE_05 = Degrees.of(85);
+
     public static final Angle ARM_STARTING_ANGLE = Degrees.of(90);
 
     public record ArmHardwareConstants(

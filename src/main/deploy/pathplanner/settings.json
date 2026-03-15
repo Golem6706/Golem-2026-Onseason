@@ -4,8 +4,9 @@
   "holonomicMode": true,
   "pathFolders": [
     "LeftFieldBatch",
-    "MiddleFieldBatch",
     "LeftFieldBatchDepot",
+    "MiddleFieldBatch",
+    "LeftFieldBatch_TwoNeutral",
     "RightFieldBatch"
   ],
   "autoFolders": [],

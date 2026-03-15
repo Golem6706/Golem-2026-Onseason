@@ -164,13 +164,14 @@ public class RobotContainer {
         Command prepareShoot = ShooterCommands.shootCommand(shooter, drive, new Trigger(() -> false));
         NamedCommands.registerCommand("ShooterON", Commands.runOnce(prepareShoot::schedule));
         Command shoot = ShooterCommands.shootCommand(shooter, drive, new Trigger(() -> true))
-                .withTimeout(4)
+                .withTimeout(6)
                 .deadlineFor(arm.armShootingToggleCommand());
 
         NamedCommands.registerCommand(
-                "ShootCommand", Commands.runOnce(shoot::schedule).andThen(Commands.waitSeconds(3.5)));
+                "ShootCommand", Commands.runOnce(shoot::schedule).andThen(Commands.waitSeconds(6)));
 
-        NamedCommands.registerCommand("IntakeON", Commands.runOnce(runIntakeAndArmDropingCommand()::schedule));
+        NamedCommands.registerCommand(
+                "IntakeON", Commands.runOnce(runIntakeAndArmDropingForAutoOnlyCommand()::schedule));
         NamedCommands.registerCommand("IntakeOFF", Commands.runOnce(runIntakeIdleAndArmHoldingingCommand()::schedule));
     }
 
@@ -193,8 +194,8 @@ public class RobotContainer {
 
         drive.setDefaultCommand(DriveCommands.joystickDrive(
                 drive,
-                () -> -controller.translationalAxisY().getAsDouble() * 0.6,
-                () -> -controller.translationalAxisX().getAsDouble() * 0.6,
+                () -> -controller.translationalAxisY().getAsDouble() * 0.65,
+                () -> -controller.translationalAxisX().getAsDouble() * 0.65,
                 () -> -controller.rotationalAxisX().getAsDouble() * 0.55));
 
         shooter.setDefaultCommand(shooter.idle());
@@ -242,18 +243,28 @@ public class RobotContainer {
 
         controller
                 .intakeButton()
+                // .whileTrue(runIntakeAndArmDropingForAutoOnlyCommand())
                 .whileTrue(runIntakeAndArmDropingCommand())
                 .onFalse(runIntakeIdleAndArmHoldingingCommand());
 
         viceController.leftBumper().onTrue(arm.armDroppingCommand());
         viceController.rightBumper().onTrue(arm.armUprightCommand());
         viceController.a().onTrue(arm.armHoldingCommand());
+        // viceController.y().whileTrue(revertIntakeAndArmHoldCommand()).onFalse(runIntakeIdleAndArmHoldingingCommand());
         viceController.b().onTrue(arm.armToggingCommand());
 
-        Command shoot = ShooterCommands.shootCommand(shooter, drive, new Trigger(() -> true))
-                .withTimeout(4)
-                .deadlineFor(arm.armShootingToggleCommand());
-        viceController.y().onTrue(Commands.runOnce(shoot::schedule).andThen(Commands.waitSeconds(4.5)));
+        // viceController.y().onTrue(arm.armShootingToggleCommand());
+
+        // Command shoot = ShooterCommands.shootCommand(shooter, drive, new Trigger(() -> true))
+        //         .withTimeout(4)
+        //         .deadlineFor(arm.armShootingToggleCommand());
+
+        // Command shoot1 = ShooterCommands.shootCommand(shooter, drive, new Trigger(() -> false))
+        //         .withTimeout(1);
+        // .deadlineFor(arm.armShootingToggleCommand());
+        viceController
+                .leftTrigger()
+                .whileTrue(ShooterCommands.shootCommand(shooter, drive, viceController.rightTrigger()));
     }
 
     public Command runIntakeAndArmDropingCommand() {
@@ -261,6 +272,24 @@ public class RobotContainer {
         commandGroup.addCommands(arm.armDroppingCommand());
         commandGroup.addCommands(Commands.waitSeconds(0.1));
         commandGroup.addCommands(arm.intakeCommand());
+
+        return commandGroup;
+    }
+
+    public Command revertIntakeAndArmHoldCommand() {
+        SequentialCommandGroup commandGroup = new SequentialCommandGroup();
+        commandGroup.addCommands(arm.armHoldingCommand());
+        commandGroup.addCommands(Commands.waitSeconds(0.5));
+        commandGroup.addCommands(arm.revertIntakeCommand());
+
+        return commandGroup;
+    }
+
+    public Command runIntakeAndArmDropingForAutoOnlyCommand() {
+        SequentialCommandGroup commandGroup = new SequentialCommandGroup();
+        commandGroup.addCommands(arm.armDroppingCommand());
+        commandGroup.addCommands(Commands.waitSeconds(0.1));
+        commandGroup.addCommands(arm.intakeForAutoOnlyCommand());
 
         return commandGroup;
     }

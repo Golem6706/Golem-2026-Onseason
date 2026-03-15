@@ -3,41 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.3,
-        "y": 5.2
+        "x": 3.23,
+        "y": 5.53
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.315421686746988,
-        "y": 6.108590361445783
+        "x": 3.9873038516405135,
+        "y": 5.671740370898717
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.3636867469879512,
-        "y": 6.952698795180722
+        "x": 5.035335235378032,
+        "y": 5.64586305278174
       },
       "prevControl": {
-        "x": 1.6259518072289159,
-        "y": 6.788783132530121
+        "x": 4.659997481806619,
+        "y": 5.654799665962012
       },
       "nextControl": {
-        "x": 0.7072551055270041,
-        "y": 7.36296857109381
+        "x": 5.578758915834522,
+        "y": 5.632924393723252
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 0.453,
-        "y": 5.2
+        "x": 7.0,
+        "y": 4.5
       },
       "prevControl": {
-        "x": 0.44575903614457796,
-        "y": 7.257024096385542
+        "x": 6.641771084337348,
+        "y": 5.767614457831327
       },
       "nextControl": null,
       "isLocked": false,
@@ -47,17 +47,17 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 1,
-      "rotationDegrees": -105.75117366345305
+      "rotationDegrees": -46.0
     }
   ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 1.518610421836218,
-      "maxWaypointRelativePos": 2.0,
+      "minWaypointRelativePos": 1.415384615384611,
+      "maxWaypointRelativePos": 1.9990074441687284,
       "constraints": {
-        "maxVelocity": 0.8,
-        "maxAcceleration": 2.5,
+        "maxVelocity": 1.5,
+        "maxAcceleration": 4.5,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -69,7 +69,7 @@
   "eventMarkers": [
     {
       "name": "IntakeON",
-      "waypointRelativePos": 0.6213399503722109,
+      "waypointRelativePos": 1.264010803511141,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -88,14 +88,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0.5,
-    "rotation": -90.0
+    "velocity": 0.0,
+    "rotation": -46.0
   },
   "reversed": false,
-  "folder": "LeftFieldBatch",
+  "folder": "LeftFieldBatch_TwoNeutral",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -33.880885202222366
+    "rotation": -46.0
   },
   "useDefaultConstraints": true
 }

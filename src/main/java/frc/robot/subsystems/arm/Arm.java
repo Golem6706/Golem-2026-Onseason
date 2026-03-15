@@ -258,31 +258,67 @@ public class Arm extends SubsystemBase {
         return moveToPosition(ARM_INTAKING_ANGLE);
     }
 
+    public Command armToggingCommand(Angle armToggingAngle) {
+        return moveToPosition(armToggingAngle);
+    }
+
     public Command armHoldingCommand() {
         return moveToPosition(ARM_ANGLE_HOLDING);
     }
 
     public Command armToggingCommand() {
-        return moveToPosition(ARM_TOGGLE_ANGLE_HIGH);
+        return moveToPosition(ARM_TOGGLE_ANGLE_03);
     }
 
-    public Command armShootingToggleCommand() {
+    public Command armShootingToggleCommand() { // 5.5 seconds
         return Commands.sequence(
+                Commands.waitSeconds(0.3),
+                // Shake 01 1
+                moveToPosition(ARM_TOGGLE_ANGLE_01),
+                Commands.waitSeconds(0.1),
+                moveToPosition(ARM_ANGLE_HOLDING), // Back to the previous angle
                 Commands.waitSeconds(0.2),
-                moveToPosition(ARM_TOGGLE_ANGLE_HIGH),
+                // Shake 01 2
+                Commands.waitSeconds(0.1),
+                moveToPosition(ARM_ANGLE_HOLDING), // Back to the previous angle
+                Commands.waitSeconds(0.2),
+                // Shake 01 3
+                moveToPosition(ARM_TOGGLE_ANGLE_01),
+                Commands.waitSeconds(0.2),
+                moveToPosition(ARM_ANGLE_HOLDING), // Back to the previous angle
                 Commands.waitSeconds(0.3),
-                armDroppingCommand(),
+                // Shake 01 4
+                moveToPosition(ARM_TOGGLE_ANGLE_01),
+                Commands.waitSeconds(0.2),
+                moveToPosition(ARM_ANGLE_HOLDING), // Back to the previous angle
                 Commands.waitSeconds(0.3),
-                moveToPosition(ARM_TOGGLE_ANGLE_HIGH),
-                Commands.waitSeconds(0.8),
-                armDroppingCommand(),
+                // shake 02  1
+                moveToPosition(ARM_TOGGLE_ANGLE_02),
+                Commands.waitSeconds(0.2),
+                moveToPosition(ARM_TOGGLE_ANGLE_01), // Back to the ARM_TOGGLE_ANGLE_01
                 Commands.waitSeconds(0.3),
-                moveToPosition(ARM_TOGGLE_ANGLE_HIGH),
-                Commands.waitSeconds(0.8),
-                armDroppingCommand(),
+                // shake 02  2
+                moveToPosition(ARM_TOGGLE_ANGLE_02),
+                Commands.waitSeconds(0.2),
+                moveToPosition(ARM_TOGGLE_ANGLE_01), // Back to the ARM_TOGGLE_ANGLE_01
                 Commands.waitSeconds(0.3),
-                moveToPosition(ARM_TOGGLE_ANGLE_HIGH),
-                Commands.waitSeconds(2.0));
+                // shake 03
+                moveToPosition(ARM_TOGGLE_ANGLE_03),
+                Commands.waitSeconds(0.2),
+                moveToPosition(ARM_TOGGLE_ANGLE_02), // Back to the ARM_TOGGLE_ANGLE_02
+                Commands.waitSeconds(0.3),
+                // shake 04
+                moveToPosition(ARM_TOGGLE_ANGLE_04),
+                Commands.waitSeconds(0.2),
+                moveToPosition(ARM_TOGGLE_ANGLE_03), // Back to the ARM_TOGGLE_ANGLE_03
+                Commands.waitSeconds(0.3),
+                // shake 05
+                moveToPosition(ARM_TOGGLE_ANGLE_05),
+                Commands.waitSeconds(0.2),
+                moveToPosition(ARM_TOGGLE_ANGLE_04), // Back to the ARM_TOGGLE_ANGLE_04
+                Commands.waitSeconds(0.3),
+                moveToPosition(ARM_TOGGLE_ANGLE_05), // shake 05
+                Commands.waitSeconds(1.1));
     }
 
     /** Upright the arm to the starting position */
@@ -292,6 +328,14 @@ public class Arm extends SubsystemBase {
 
     public Command intakeCommand() {
         return run(() -> io.setIntakeMotorOutput(INTAKE_VOLTAGE));
+    }
+
+    public Command revertIntakeCommand() {
+        return run(() -> io.setIntakeMotorOutput(REVERT_INTAKE_VOLTAGE));
+    }
+
+    public Command intakeForAutoOnlyCommand() {
+        return run(() -> io.setIntakeMotorOutput(INTAKE_VOLTAGE_FOR_AUTO_ONLY));
     }
 
     public Command intakeStopCommand() {

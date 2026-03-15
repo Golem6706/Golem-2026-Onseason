@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Right_Grab First Batch"
+            "pathName": "Middle_1 Grab Depot Fuel"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Right_Shoot First Batch"
+            "pathName": "Middle_2 Shoot Depot Fuel"
           }
         },
         {
@@ -25,13 +25,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Right_Grab Second Batch_C"
+            "pathName": "Middle_3 Grab Neutral Fuel"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Right_Shoot Second Batch_C"
+            "pathName": "MiddleS_4 Shoot Neutral Fuel"
           }
         },
         {

@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Depot_Grab First Batch"
+            "pathName": "Grab First Batch_B"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Depot_Shoot First Batch"
+            "pathName": "Shoot First Batch_B"
           }
         },
         {
@@ -25,13 +25,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Depot_Grab Second Batch"
+            "pathName": "Grab Second Batch_B"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Depot_Shoot Second Batch"
+            "pathName": "Shoot Second Batch_B"
           }
         },
         {
